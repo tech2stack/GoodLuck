@@ -17,11 +17,12 @@ const Footer = () => {
         <div className="footer-column footer-links">
           <h3 className="footer-heading">Quick Links</h3>
           <ul>
-            <li><a href="#hero-section">Home</a></li>
-            <li><a href="#about-section">About Us</a></li>
-            <li><a href="#benefits-section">Benefits</a></li>
-            <li><a href="#customers-section">Reviews</a></li>
-            <li><a href="#contact-section">Contact</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/#benefits">Benefits</a></li>
+            <li><a href="/#review">Reviews</a></li>
+            
             {/* Add more links as your site grows */}
           </ul>
         </div>

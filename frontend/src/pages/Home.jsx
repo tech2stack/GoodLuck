@@ -42,14 +42,14 @@ const Home = () => {
       </section>
 
       {/* Your Bookstore, Your Benefits Section */}
-      <section className="benefits-section">
+      <section className="benefits-section" id="benefits">
         <h2 className="section-title">Your Bookstore, Your Benefits</h2>
         <div className="benefits-grid">
           <div className="benefit-card">
             <img src="https://miro.medium.com/v2/resize:fit:675/1*GcwyDKN76j6Le4B1EMApOA.jpeg" alt="Complete School Book Sets" className="benefit-image" />
             <div className="benefit-text-content">
               <h3>Complete School Book Sets</h3>
-              <p>Pre-packed sets of textbooks, notebooks, and stationery for major schools.</p>
+              <p>Pre-packed sets of textbooks, notebooks, and stationery for major schools.</p><br></br>
               <button className="benefit-button">Learn More</button>
             </div>
           </div>
@@ -57,7 +57,7 @@ const Home = () => {
             <img src="https://www.shutterstock.com/image-vector/combo-offers-labels-promotion-banner-600nw-2076677263.jpg" alt="Exclusive Discounts & Combos" className="benefit-image" />
             <div className="benefit-text-content">
               <h3>Exclusive Discounts & Combos</h3>
-              <p>Save up to 50% with seasonal discounts and combo deals.</p>
+              <p>Save up to 50% with seasonal discounts and combo deals.</p><br></br>
               <br />
               <button className="benefit-button">Learn More</button>
             </div>
@@ -82,7 +82,7 @@ const Home = () => {
       </section>
 
       {/* Our Favorite Customers Section */}
-      <section className="customers-section">
+      <section className="customers-section" id="review">
         <h2 className="section-title">Our favorite customers</h2>
         <div className="customer-reviews-grid">
           <div className="customer-review-card">
