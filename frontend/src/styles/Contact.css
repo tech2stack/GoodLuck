@@ -96,14 +96,8 @@ body {
   color: #dc2626;
 }
 
-<<<<<<< HEAD
 .optional {
   color: #9ca3af;
-=======
-button:hover {
-  transform: scale(1.04);
-  /* background: linear-gradient(135deg, #43a047, #1976d2); */
->>>>>>> f925f0cfbb7bc97a8f57122058c9d3e5cb08b618
 }
 
 .form-group input,
