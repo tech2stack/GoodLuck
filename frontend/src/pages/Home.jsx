@@ -58,6 +58,7 @@ const Home = () => {
             <div className="benefit-text-content">
               <h3>Exclusive Discounts & Combos</h3>
               <p>Save up to 50% with seasonal discounts and combo deals.</p>
+              <br />
               <button className="benefit-button">Learn More</button>
             </div>
           </div>
