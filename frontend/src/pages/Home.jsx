@@ -14,7 +14,15 @@ const Home = () => {
         <div className="hero-overlay">
           <h1 className="hero-title">TURN THE PAGE TO YOUR DREAMS</h1>
           <h1 className="hero-subtitle">READ WITH US!</h1>
-          <button className="hero-button">Explore Now</button>
+          <button 
+  className="hero-button"
+  onClick={() => {
+    window.open("https://www.google.com/maps/dir/?api=1&destination=Goodluck+Book+Store+Bhopal", "_blank");
+  }}
+>
+  Explore Now
+</button>
+
         </div>
       </section>
 
@@ -31,7 +39,7 @@ const Home = () => {
               At Goodluck Book Store, we're dedicated to enriching minds and fostering a love for reading. We provide a wide range of academic books, captivating fiction, and essential stationery for learners of all ages. Our commitment to quality and customer satisfaction makes us your trusted partner in education and literature. Experience the joy of discovery with every page you turn.
             </p>
             <div className="about-buttons">
-              <button className="btn-primary">Learn More</button>
+              {/* <button className="btn-primary">Learn More</button> */}
               <button className="btn-secondary">Contact Us</button>
             </div>
           </div>
@@ -59,7 +67,7 @@ const Home = () => {
               <h3>Exclusive Discounts & Combos</h3>
               <p>Save up to 50% with seasonal discounts and combo deals.</p><br></br>
               <br />
-              {/* <button className="benefit-button">Learn More</button> */}
+              <button className="benefit-button">Learn More</button>
             </div>
           </div>
           {/* <div className="benefit-card">
