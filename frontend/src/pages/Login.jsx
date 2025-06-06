@@ -60,7 +60,7 @@ const Login = () => {
         </form>
 
         <p className="forgot">
-          <a href="/forgot-password">Forgot Password?</a>
+          <a href="/forgot">Forgot Password?</a>
         </p>
       </div>
     </div>

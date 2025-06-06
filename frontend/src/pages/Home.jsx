@@ -13,14 +13,16 @@ const Home = () => {
         <img src={bgImage} alt="Goodluck Book Store Banner" className="hero-background-image" />
         <div className="hero-overlay">
           <h1 className="hero-title">TURN THE PAGE TO YOUR DREAMS</h1>
-          <h1 className="hero-subtitle">READ WITH US!</h1>
+          <h1 className="hero-subtitle">~ read with us!</h1>
+          {/* <h1 className="hero-subtitle">Read today, build tommorow</h1> */}
+
           <button 
   className="hero-button"
   onClick={() => {
     window.open("https://www.google.com/maps/dir/?api=1&destination=Goodluck+Book+Store+Bhopal", "_blank");
   }}
 >
-  Explore Now
+  Visit Now
 </button>
 
         </div>
@@ -70,22 +72,23 @@ const Home = () => {
               <button className="benefit-button">Learn More</button>
             </div>
           </div>
-          {/* <div className="benefit-card">
+          <div className="benefit-card">
             <img src={bgImage} alt="Home Delivery Service" className="benefit-image" />
             <div className="benefit-text-content">
               <h3>Home Delivery Service</h3>
               <p>Fast and reliable delivery right to your doorstep.</p>
+              <br />  <br />
               <button className="benefit-button">Learn More</button>
             </div>
-          </div> */}
-          <div className="benefit-card">
+          </div>
+          {/* <div className="benefit-card">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfAZKxC8BfNxZQJAbBzAu5QbiTZzQY84WBPF0DIkdokqv7YrkC3hdZkE5FE3SIbk1aHrc&usqp=CAU" alt="Pre-order Facility" className="benefit-image" />
             <div className="benefit-text-content">
               <h3>Pre-Order Facility for New Academic Sessions</h3>
               <p>Reserve your books ahead of academic sessions to get priority delivery.</p>
               <button className="benefit-button">Learn More</button>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
 
