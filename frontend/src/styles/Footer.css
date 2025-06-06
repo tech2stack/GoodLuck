@@ -1,0 +1,178 @@
+/* --- GLOBAL CSS VARIABLES (Ensure these match your Home.css and Header.css) --- */
+:root {
+  /* Base Colors - Now Light-focused */
+  --color-primary-light: #F8F8F8; /* Main background, very light gray */
+  --color-green: #4CAF50;        /* Primary Accent Green (same as before) */
+  --color-gold: #FFD700;         /* Secondary Accent Gold/Yellow (same as before) */
+
+  /* Derived Colors for Light Theme */
+  --color-primary-medium: #EFEFEF; /* Slightly darker light for gradients/sections */
+  --color-primary-darker: #E0E0E0; /* Even darker light for subtle contrasts */
+
+  --color-green-dark: #388E3C;   /* Darker shade of green */
+  --color-gold-dark: #e6c200;    /* Darker shade of gold */
+
+  --text-primary-dark: #333333;  /* Main text color on light backgrounds */
+  --text-secondary-dark: #666666;/* Secondary text/muted descriptions */
+  --text-on-accent: #FFFFFF;     /* Text on green/gold accents (e.g., buttons) */
+
+  /* General Spacing & Sizing (remain consistent) */
+  --spacing-unit: 1rem;
+  --header-height: 5rem;
+  --container-max-width: 1200px;
+  --border-radius-base: 8px;
+  --border-radius-large: 15px;
+  --border-radius-pill: 50px;
+}
+
+/* --- FOOTER STYLES --- */
+.footer {
+  background-color: var(--color-primary-medium); /* Light background for the footer */
+  color: var(--text-secondary-dark); /* Muted dark text for general footer text */
+  padding-top: 3rem; /* More padding at the top for multi-column layout */
+  padding-bottom: 1rem; /* Less padding at bottom, copyright has its own section */
+  font-size: 0.95rem;
+  border-top: 1px solid var(--color-primary-darker); /* Subtle light border at the top */
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05); /* Very soft shadow for separation */
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Flexible columns */
+  gap: 2.5rem; /* Space between columns */
+  padding-bottom: 2.5rem; /* Space before the bottom copyright section */
+  text-align: left; /* Default text alignment for columns */
+}
+
+.footer-column {
+  line-height: 1.8; /* Improve readability */
+}
+
+.footer-heading {
+  font-size: 1.3rem;
+  color: var(--color-green-dark); /* Darker green for headings */
+  margin-bottom: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+}
+
+/* Footer About Section */
+.footer-about p {
+  color: var(--text-primary-dark); /* Slightly darker text for main description */
+}
+
+/* Footer Quick Links */
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+  color: var(--text-primary-dark); /* Dark text for links */
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.2s ease;
+  font-weight: 500;
+  display: inline-block; /* Allows transform on hover */
+}
+
+.footer-links a:hover {
+  color: var(--color-green); /* Gold on hover */
+  transform: translateX(5px); /* Slight slide on hover */
+}
+
+/* Footer Contact Info */
+.footer-contact p {
+  margin-bottom: 0.5rem;
+  color: var(--text-primary-dark);
+}
+
+.footer-contact p strong {
+  color: var(--color-green); /* Green for bold text like "Phone" or "Email" */
+}
+
+/* Footer Social Icons */
+.social-icons {
+  display: flex;
+  gap: 1rem; /* Space between icons */
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+.social-icons a {
+  color: var(--text-primary-dark); /* Dark icon color */
+  font-size: 1.8rem; /* Larger icon size */
+  transition: color 0.3s ease, transform 0.2s ease;
+  text-decoration: none; /* Remove underline */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Space between icon and text if text is present */
+}
+
+.social-icons a:hover {
+  color: var(--color-green); /* Gold on hover */
+  transform: translateY(-3px);
+}
+
+/* If you are using Font Awesome or similar icon fonts, ensure they are loaded */
+/* .social-icons i {
+  font-size: inherit;
+} */
+
+
+/* Footer Bottom (Copyright) */
+.footer-bottom {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-primary-darker); /* Separator line */
+  margin-top: 1.5rem;
+  color: var(--text-secondary-dark); /* Muted dark text for copyright */
+  font-size: 0.85rem;
+}
+
+.footer-bottom p {
+  margin: 0;
+}
+
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
+
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr; /* Stack columns on smaller screens */
+    text-align: center; /* Center align text when stacked */
+  }
+
+  .footer-links ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Center links when stacked */
+    gap: 0.8rem 1.5rem; /* Space between stacked links */
+  }
+
+  .footer-links li {
+    margin-bottom: 0; /* Remove vertical margin when links are inline */
+  }
+
+  .social-icons {
+    justify-content: center; /* Center social icons */
+  }
+
+  .footer-bottom {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-heading {
+    font-size: 1.2rem;
+  }
+
+  .social-icons a {
+    font-size: 1.5rem;
+  }
+}
