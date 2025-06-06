@@ -538,7 +538,7 @@ body {
   .btn-primary, .btn-secondary, .hero-button, .benefit-button {
     padding: 12px 25px;
     font-size: 1em;
-  }
+    width: fit-content;  }
 
   .about-heading {
     font-size: 2em;
