@@ -1,6 +1,6 @@
 import React from 'react';
-import '../styles/Contact.css'; // CSS file
-import bgImage from '../assets/bg.jpg'; // Background image
+import '../styles/Contact.css';
+import bgImage from '../assets/bg.jpg';
 
 const ContactForm = () => {
   return (
@@ -11,18 +11,14 @@ const ContactForm = () => {
         <div className="image-wrapper">
           <div
             className="background-image"
-            style={{ backgroundImage: 'url("https://150241785.v2.pressablecdn.com/wp-content/uploads/2024/02/Contact-Us.png")' }}
+            style={{ backgroundImage: `url(${bgImage})` }}
           ></div>
 
           <div className="contact-info">
-            
             <InfoItem icon="fas fa-phone" title="Phone" detail="+91 7024136476" />
-            <InfoItem icon="fas fa-envelope" title="Email" detail=" info@goodluckbookstore.com" />
             <InfoItem icon="fas fa-phone" title="Phone" detail="+91 7024136476" />
-            <InfoItem icon="fas fa-map-marker-alt" title="Ashoka Garden Store" detail="Shop No. 2, Shriji Tower,
-Near Manpreet Hotel, New Ashoka Garden,
-Bhopal, Madhya Pradesh 462023" />
-           
+            <InfoItem icon="fas fa-envelope" title="Email" detail="info@goodluckbookstore.com" />
+            <InfoItem icon="fas fa-map-marker-alt" title="Ashoka Garden Store" detail="Shop No. 2, Shriji Tower, Near Manpreet Hotel, New Ashoka Garden, Bhopal, Madhya Pradesh 462023" />
           </div>
         </div>
 
@@ -45,7 +41,7 @@ Bhopal, Madhya Pradesh 462023" />
                 Phone number <span className="required">*</span>
               </label>
               <div className="phone-input">
-                <select className="country-code-button" name="country" id="country" required defaultValue="+1">
+                <select className="country-code-button" name="country" id="country" required defaultValue="+91">
                   <option value="+1">🇺🇸 +1 (USA)</option>
                   <option value="+91">🇮🇳 +91 (India)</option>
                   <option value="+44">🇬🇧 +44 (UK)</option>
@@ -99,7 +95,6 @@ Bhopal, Madhya Pradesh 462023" />
   );
 };
 
-// Reusable Contact Info Item
 const InfoItem = ({ icon, title, detail }) => (
   <div className="info-item">
     <div className="icon-wrapper"><i className={icon}></i></div>
@@ -108,14 +103,7 @@ const InfoItem = ({ icon, title, detail }) => (
   </div>
 );
 
-// Reusable Form Input
-const FormGroup = ({
-  id,
-  label,
-  placeholder,
-  type = 'text',
-  required = false,
-}) => (
+const FormGroup = ({ id, label, placeholder, type = 'text', required = false }) => (
   <div className="form-group">
     <label htmlFor={id}>
       {label} {required && <span className="required">*</span>}
