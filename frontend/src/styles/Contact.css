@@ -2,6 +2,7 @@ body {
   font-family: 'Inter', sans-serif;
   background: #f9f9fc;
   margin: 0; /* Remove default body margin */
+  
 }
 
 .contact-form-container {
@@ -9,8 +10,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0; /* Remove padding */
+  padding: 0;
+  margin-top: 10px;
+  margin-bottom: 20px;
+
+  background-image: url('../assets/bg.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed; /* Keeps the image static */
+  filter: brightness(0.8) contrast(1.1);
 }
+
 .country-code-button {
   padding: 0.5rem;
   background: #f3f4f6;
@@ -165,4 +176,10 @@ body {
 
 .submit-button:hover {
   background-color: #4338ca;
+}
+
+@media (max-width: 768px) {
+  .contact-form-container {
+    background-attachment: scroll; /* Prevent scroll performance issues on mobile */
+  }
 }

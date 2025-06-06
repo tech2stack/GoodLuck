@@ -59,6 +59,8 @@
 
 .site-title {
   font-size: clamp(1.2rem, 2vw, 1.8rem);
+  font-family: Arial, Verdana, Tahoma, sans-serif;
+
   font-weight: 700;
   margin: 0;
   color: var(--text-primary-dark);
@@ -198,6 +200,8 @@
 
   .site-title {
     font-size: 1.1rem;
+    font-family: Arial, Verdana, Tahoma, sans-serif;
+
   }
 
   .hamburger-lines .line {

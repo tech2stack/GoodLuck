@@ -11,14 +11,14 @@ const ContactForm = () => {
         <div className="image-wrapper">
           <div
             className="background-image"
-            style={{ backgroundImage: `url(${bgImage})` }}
+            style={{ backgroundImage: 'url("https://150241785.v2.pressablecdn.com/wp-content/uploads/2024/02/Contact-Us.png")' }}
           ></div>
 
           <div className="contact-info">
             
             <InfoItem icon="fas fa-phone" title="Phone" detail="+91 7024136476" />
-            <InfoItem icon="fas fa-envelope" title="Email" detail="info@metaballs.studio" />
-            <InfoItem icon="fas fa-phone" title="Phone" detail="+91 0000000000" />
+            <InfoItem icon="fas fa-envelope" title="Email" detail=" info@goodluckbookstore.com" />
+            <InfoItem icon="fas fa-phone" title="Phone" detail="+91 7024136476" />
             <InfoItem icon="fas fa-map-marker-alt" title="Ashoka Garden Store" detail="Shop No. 2, Shriji Tower,
 Near Manpreet Hotel, New Ashoka Garden,
 Bhopal, Madhya Pradesh 462023" />
@@ -37,7 +37,7 @@ Bhopal, Madhya Pradesh 462023" />
               <FormGroup id="lastName" label="Last name" placeholder="Last name" required />
             </div>
 
-            <FormGroup id="email" label="Email" type="email" placeholder="hi@metaballs.studio" required />
+            <FormGroup id="email" label="Email" type="email" placeholder="example@gmail.com" required />
 
             {/* Phone with Country Code Dropdown */}
             <div className="form-group">
