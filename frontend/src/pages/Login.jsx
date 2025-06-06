@@ -4,6 +4,7 @@ import logo from '../assets/logo.jpg';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [role, setRole] = useState('user'); // dropdown selection
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -13,22 +14,32 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Placeholder logic – replace with real auth
-    if (credentials.username === 'admin' && credentials.password === 'admin') {
-      alert('Login successful!');
-      window.location.href = '/dashboard'; // adjust route as per your router setup
+    // Placeholder logic – replace with real role-based authentication
+    if (credentials.username === 'admin' && credentials.password === 'admin' && role === 'admin') {
+      alert('Admin login successful!');
+      window.location.href = '/dashboard';
+    } else if (role === 'staff') {
+      alert('Staff login (placeholder)');
+    } else if (role === 'user') {
+      alert('User login (placeholder)');
     } else {
-      alert('Invalid credentials');
+      alert('Invalid credentials or role');
     }
   };
 
   return (
-    
     <div className="login-container">
       <div className="login-box">
         <img src={logo} alt="GoodLuck Logo" className="login-logo" />
-        <h2>User Login</h2>
+        <h2>Login</h2>
+
         <form onSubmit={handleLogin}>
+          <select className="role-dropdown" value={role} onChange={(e) => setRole(e.target.value)} required>
+            <option value="user">Login as User</option>
+            <option value="staff">Login as Staff</option>
+            <option value="admin">Login as Admin</option>
+          </select>
+
           <input
             type="text"
             name="username"
@@ -46,14 +57,11 @@ const Login = () => {
             required
           />
           <button type="submit">Login</button>
-
         </form>
-        <p className="forgot">  
-          <a href="/forgot-password">
-          Forgot Password?
-          </a>
-        </p>
 
+        <p className="forgot">
+          <a href="/forgot-password">Forgot Password?</a>
+        </p>
       </div>
     </div>
   );
