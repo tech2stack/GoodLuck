@@ -33,11 +33,14 @@ const Header = () => {
         </nav>
       </div>
 
-      <button className="hamburger-icon" onClick={toggleMenu} aria-label="Toggle navigation menu">
-        <span className="bar"></span>
-        <span className="bar"></span>
-        <span className="bar"></span>
-      </button>
+      <button className={`hamburger-icon ${isOpen ? 'open' : ''}`} onClick={toggleMenu} aria-label="Toggle navigation menu">
+  <div className="hamburger-lines">
+    <span className="line top"></span>
+    <span className="line middle"></span>
+    <span className="line bottom"></span>
+  </div>
+</button>
+
     </header>
   );
 };
