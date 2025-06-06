@@ -114,6 +114,7 @@ body {
 .hero-title {
   font-size: 4.5em;
   margin-bottom: 5px;
+  font-weight: bold;
   font-weight: 900;
   letter-spacing: 3px;
   text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.9);
@@ -122,6 +123,7 @@ body {
 
 .hero-subtitle {
   font-size: 3em;
+  font-family:serif;
   margin-top: 0;
   margin-bottom: 40px;
   font-weight: 700;
