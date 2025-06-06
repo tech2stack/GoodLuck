@@ -163,12 +163,18 @@ body {
 /* .goodluck-logo {} */
 
 .about-heading {
-  font-size: 2.8em;
-  color: var(--primary-green);
+  font-family: 'Cinzel', serif;
+  font-size: 3rem;
   margin: 0;
-  font-weight: 800;
-  letter-spacing: 1px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+  background: linear-gradient(to right, #4CAF50, #79a100, #00BFFF); /* green, red, sky */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
+
 
 .about-tagline {
   font-size: 1.2em;

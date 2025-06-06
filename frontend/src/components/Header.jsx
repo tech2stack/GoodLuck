@@ -20,7 +20,7 @@ const Header = () => {
       <div className="header-left">
         <Link to="/" className="header-logo-link" onClick={closeMenu}>
           <img src={logoImage} alt="Goodluck Book Store Logo" className="header-logo" />
-          <h1 className="site-title">Goodluck Book Store</h1>
+          <h1 className="site-title"><b>Goodluck Book Store</b></h1>
         </Link>
       </div>
 

@@ -40,7 +40,7 @@ const Home = () => {
             </p>
             <div className="about-buttons">
               {/* <button className="btn-primary">Learn More</button> */}
-              <button className="btn-secondary">Contact Us</button>
+              <a href="/contact"><button className="btn-secondary">Contact Us</button></a>
             </div>
           </div>
           <div className="about-image-container">
