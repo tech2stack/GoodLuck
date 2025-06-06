@@ -80,7 +80,7 @@ const ContactForm = () => {
                 By checking this, you agree to our <a href="#" className="privacy-link">privacy policy</a>.
               </label>
             </div>
-            <button className="submit-button" type="submit">Send message</button>
+            <button className="submit-button" type="submit">Send message </button>
           </form>
         </div>
       </div>
