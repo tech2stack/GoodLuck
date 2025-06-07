@@ -1,156 +1,154 @@
+import React from "react";
+import styled from "styled-components";
+import aboutImage from "../assets/bg.jpg"; // Use your actual image here
 
-import React from 'react';
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-const InputSideWrapper = styled.form`
-  height: auto;
-  padding-bottom: 100px;
-  position: relative;
-  padding: 10px 10px 100px 10px;
-`;
+// Import the LazyImage component
+import LazyImage from '../components/LazyImage'; 
 
-const InputWrapper = styled.div`
-  border: 2px solid transparent;
-  width: 90%;
-  padding-left: 10px;
+const PageWrapper = styled.div`
+  min-height: 100vh;
+  /*
+    This background image is loaded via CSS (styled-components).
+    It will be implicitly lazy-loaded because the About component itself
+    is lazy-loaded via React.lazy() in App.js. No direct change needed here.
+  */
+  background: url(${aboutImage}) center/cover no-repeat fixed;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 `;
 
-const Input = styled.input`
-  color: #333;
+// Dark overlay for better text readability
+const Overlay = styled.div`
+  background-color: rgba(0, 0, 0, 0.6);
+  min-height: 100vh;
   width: 100%;
-  font-size: 15px;
-  padding: 8px;
-  border-bottom: 1px solid rgb(100, 21, 173);
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
-  border-top: 1px solid transparent;
-  outline: 0px transparent !important;
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-const MessageInput = styled.textarea`
-  width: 100%;
-  color: #333;
-  font-size: 15px;
-  padding: 10px;
-  border-bottom: 1px solid rgb(100, 21, 173);
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
-  border-top: 1px solid transparent;
-  outline: 0px transparent !important;
+// Main content container with glass effect
+const ContentContainer = styled.div`
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  width: 75%;
+  max-width: 900px;
+  display: flex;
+  gap: 40px;
+  padding: 40px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 90%;
+    padding: 20px;
+    gap: 25px;
+  }
 `;
 
-const SubMitButton = styled.input`
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px;
-  background-color: rgb(8, 8, 63);
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  padding: 12px 25px 12px 24px;
-  cursor: pointer;
+const LeftSide = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /*
+    The img tag styled within LeftSide will now be the internal img of LazyImage.
+    These styles will still apply.
+  */
+  img {
+    border-radius: 16px;
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
 `;
 
-const LoadingButton = styled.button`
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px;
-  background-color: rgb(8, 8, 63);
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  padding: 12px 25px 12px 24px;
-  cursor: pointer;
-`;
+const RightSide = styled.div`
+  flex: 1;
+  color: #f0f0f0;
+  font-family: 'Segoe UI', sans-serif;
 
-const InputSide = () => {
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [phone, setPhone] = React.useState('');
-  const [message, setMessage] = React.useState('');
-  const [buttonLoading, setButtonLoading] = React.useState(false);
+  h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 8px rgba(0, 255, 170, 0.8);
+  }
 
-  const nameHandler = (e) => {
-    setName(e.target.value);
-  };
+  p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    color: #ddd;
+  }
 
-  const emailHandler = (e) => {
-    setEmail(e.target.value);
-  };
+  h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #4caf50;
+  }
 
-  const phoneHandler = (e) => {
-    setPhone(e.target.value);
-  };
-  const messageHandler = (e) => {
-    setMessage(e.target.value);
-  };
+  ul {
+    list-style: none;
+    padding-left: 0;
 
-  const navigate = useNavigate();
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setButtonLoading(true);
-    const response = await fetch('https://formspree.io/f/<your-form-id>', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, phone, message }),
-    });
+    li {
+      font-size: 18px;
+      margin-bottom: 12px;
+      padding-left: 24px;
+      position: relative;
+      color: #c8facc;
 
-    if (response.ok) {
-      navigate('/success');
-      setButtonLoading(false);
-    } else {
-      alert('Failed to submit form');
+      &::before {
+        content: "✔";
+        position: absolute;
+        left: 0;
+        color: #4caf50;
+      }
     }
-  };
+  }
+`;
+
+const About = () => {
+  const paragraph =
+    "Welcome to Goodluck Book Store! We are dedicated to providing a wide range of books across genres with excellent customer service.";
+
+  const whyChooseUs = [
+    "Wide variety of books",
+    "Affordable prices",
+    "Experienced staff",
+    "Custom orders available",
+    "Fast delivery",
+    "Trusted by thousands",
+  ];
 
   return (
-    <InputSideWrapper onSubmit={handleSubmit}>
-      <InputWrapper>
-        <p>Name</p>
-        <Input type="text" required placeholder="Allen Jones" value={name} onChange={nameHandler} />
-      </InputWrapper>
-      <InputWrapper>
-        <p>Email</p>
-        <Input
-          type="email"
-          placeholder="aljay126@gmail.com"
-          value={email}
-          onChange={emailHandler}
-          required
-        />
-      </InputWrapper>
-      <InputWrapper>
-        <p>Phone</p>
-        <Input
-          type="tel"
-          required
-          placeholder="+233546227893"
-          value={phone}
-          onChange={phoneHandler}
-        />
-      </InputWrapper>
-      <InputWrapper>
-        <p>Message</p>
-        <MessageInput
-          required
-          placeholder="Write your message"
-          value={message}
-          onChange={messageHandler}
-        />
-      </InputWrapper>
-      {buttonLoading ? (
-        <LoadingButton>Loading...</LoadingButton>
-      ) : (
-        <SubMitButton type="submit" value="Send Message" />
-      )}
-    </InputSideWrapper>
+    <PageWrapper>
+      <Overlay>
+        <ContentContainer>
+          <LeftSide>
+            {/* Changed <img> to <LazyImage> for the image inside LeftSide */}
+            <LazyImage src={aboutImage} alt="About Goodluck Bookstore" />
+          </LeftSide>
+          <RightSide>
+            <h2>About Us</h2>
+            <p>{paragraph}</p>
+            <h3>Why Choose Us?</h3>
+            <ul>
+              {whyChooseUs.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          </RightSide>
+        </ContentContainer>
+      </Overlay>
+    </PageWrapper>
   );
 };
 
-export default InputSide;
+export default About;
