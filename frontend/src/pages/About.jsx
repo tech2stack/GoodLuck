@@ -1,10 +1,17 @@
-// export default About;
 import React from "react";
 import styled from "styled-components";
 import aboutImage from "../assets/bg.jpg"; // Use your actual image here
 
+// Import the LazyImage component
+import LazyImage from '../components/LazyImage'; 
+
 const PageWrapper = styled.div`
   min-height: 100vh;
+  /*
+    This background image is loaded via CSS (styled-components).
+    It will be implicitly lazy-loaded because the About component itself
+    is lazy-loaded via React.lazy() in App.js.
+  */
   background: url(${aboutImage}) center/cover no-repeat fixed;
   display: flex;
   align-items: center;
@@ -50,6 +57,11 @@ const LeftSide = styled.div`
   justify-content: center;
   align-items: center;
 
+  /*
+    The img tag inside LeftSide will now be handled by LazyImage,
+    so its specific styling for max-width, height, box-shadow
+    will be applied to the LazyImage's internal <img> tag.
+  */
   img {
     border-radius: 16px;
     max-width: 100%;
@@ -121,7 +133,8 @@ const About = () => {
       <Overlay>
         <ContentContainer>
           <LeftSide>
-            <img src={aboutImage} alt="About Goodluck Bookstore" />
+            {/* Changed <img> to <LazyImage> for the image inside LeftSide */}
+            <LazyImage src={aboutImage} alt="About Goodluck Bookstore" />
           </LeftSide>
           <RightSide>
             <h2>About Us</h2>

@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import '../styles/Login.css';
 import logo from '../assets/logo.jpg';
 
+// Import the LazyImage component
+import LazyImage from '../components/LazyImage'; 
+
 const Login = () => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [role, setRole] = useState('user'); // dropdown selection
@@ -30,7 +33,8 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <img src={logo} alt="GoodLuck Logo" className="login-logo" />
+        {/* Changed <img> to <LazyImage> for the logo */}
+        <LazyImage src={logo} alt="GoodLuck Logo" className="login-logo" />
         <h2>Login</h2>
 
         <form onSubmit={handleLogin}>

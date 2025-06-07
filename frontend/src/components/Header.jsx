@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import '../styles/Header.css';
 import logoImage from '../assets/logo.jpg';
 
+// Import the LazyImage component
+import LazyImage from './LazyImage'; 
+
 // React Icons
 import { FaHome, FaUserAlt, FaSignInAlt } from 'react-icons/fa';
 import { MdContactMail } from 'react-icons/md';
@@ -17,7 +20,8 @@ const Header = () => {
     <header className="header">
       <div className="header-left">
         <Link to="/" className="header-logo-link" onClick={closeMenu}>
-          <img src={logoImage} alt="Goodluck Book Store Logo" className="header-logo" />
+          {/* Changed <img> to <LazyImage> for the logo */}
+          <LazyImage src={logoImage} alt="Goodluck Book Store Logo" className="header-logo" />
           <h1 className="site-title"><b>Good Luck Book Store</b></h1>
         </Link>
       </div>

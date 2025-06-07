@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1200); // Initial loader delay
+    }, 3000);
 
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
@@ -33,7 +33,6 @@ function App() {
     };
   }, []);
 
-  // Show Preloader if app is loading or offline
   if (isLoading || !isOnline) {
     return <Preloader />;
   }
