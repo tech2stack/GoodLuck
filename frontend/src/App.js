@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1200);
+    }, 1500);
 
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
