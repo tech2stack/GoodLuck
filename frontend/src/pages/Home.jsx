@@ -1,5 +1,8 @@
 import React from "react";
-import bgImage from '../assets/bg.jpg';
+import bgImage from '../assets/3.png';
+import background from '../assets/bg.jpg';
+import Delivery from '../assets/home_delivery.png';
+
 import Kunal from '../assets/kunal.jpg';
 import Shivam from '../assets/shivam.jpg';
 import Shital from '../assets/shital.jpg';
@@ -14,7 +17,12 @@ const Home = () => {
       {/* Hero Section - Top Banner */}
       <section className="hero-section">
         {/* Changed <img> to <LazyImage> */}
-        <LazyImage src={bgImage} alt="Goodluck Book Store Banner" className="hero-background-image" />
+        <LazyImage 
+  src={bgImage} 
+  alt="Goodluck Book Store Banner" 
+  className="hero-background-image" 
+/>
+
         <div className="hero-overlay">
           <h1 className="hero-title">TURN THE PAGE TO YOUR DREAMS</h1>
           <h1 className="hero-subtitle">~ read with us!</h1>
@@ -47,7 +55,7 @@ const Home = () => {
           </div>
           <div className="about-image-container">
             {/* Changed <img> to <LazyImage> */}
-            <LazyImage src={bgImage} alt="Goodluck Book Store Interior" className="about-store-image" />
+            <LazyImage src={background} alt="Goodluck Book Store Interior" className="about-store-image" />
           </div>
         </div>
       </section>
@@ -77,7 +85,7 @@ const Home = () => {
           </div>
           <div className="benefit-card">
             {/* Changed <img> to <LazyImage> */}
-            <LazyImage src={bgImage} alt="Home Delivery Service" className="benefit-image" />
+            <LazyImage src={Delivery} alt="Home Delivery Service" className="benefit-image" />
             <div className="benefit-text-content">
               <h3>Home Delivery Service</h3>
               <p>Fast and reliable delivery right to your doorstep.</p>

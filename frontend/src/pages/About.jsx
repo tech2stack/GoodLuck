@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import aboutImage from "../assets/bg.jpg"; // Use your actual image here
+import aboutImage from "../assets/3.png"; // Use your actual image here
+import background from '../assets/bg.jpg';
 
 // Import the LazyImage component
 import LazyImage from '../components/LazyImage'; 
@@ -134,7 +135,7 @@ const About = () => {
         <ContentContainer>
           <LeftSide>
             {/* Changed <img> to <LazyImage> for the image inside LeftSide */}
-            <LazyImage src={aboutImage} alt="About Goodluck Bookstore" />
+            <LazyImage src={background} alt="About Goodluck Bookstore" />
           </LeftSide>
           <RightSide>
             <h2>About Us</h2>

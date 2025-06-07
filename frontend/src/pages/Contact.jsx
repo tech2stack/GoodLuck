@@ -80,13 +80,13 @@ const ContactForm = () => {
               <textarea id="message" name="message" placeholder="Share your message..." rows="3"></textarea>
             </div>
 
-            <div className="privacy-policy">
+            {/* <div className="privacy-policy">
               <input id="privacy" name="privacy" type="checkbox" required />
               <label htmlFor="privacy">
                 By checking this, you agree to our{' '}
                 <a href="#" className="privacy-link">privacy policy</a>.
               </label>
-            </div>
+            </div> */}
 
             <button className="submit-button" type="submit">
               Send message
