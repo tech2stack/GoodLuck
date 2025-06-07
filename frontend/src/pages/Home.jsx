@@ -2,6 +2,9 @@ import React from "react";
 import bgImage from '../assets/3.png';
 import background from '../assets/bg.jpg';
 import Delivery from '../assets/home_delivery.png';
+import BookSet from '../assets/sets.png';
+
+import Offer from '../assets/offer.png';
 
 import Kunal from '../assets/kunal.jpg';
 import Shivam from '../assets/shivam.jpg';
@@ -66,7 +69,7 @@ const Home = () => {
         <div className="benefits-grid">
           <div className="benefit-card">
             {/* Changed <img> to <LazyImage> - Note: External URLs also work */}
-            <LazyImage src="https://miro.medium.com/v2/resize:fit:675/1*GcwyDKN76j6Le4B1EMApOA.jpeg" alt="Complete School Book Sets" className="benefit-image" />
+            <LazyImage src={BookSet} alt="Complete School Book Sets" className="benefit-image" />
             <div className="benefit-text-content">
               <h3>Complete School Book Sets</h3>
               <p>Pre-packed sets of textbooks, notebooks, and stationery for major schools.</p><br></br>
@@ -75,7 +78,7 @@ const Home = () => {
           </div>
           <div className="benefit-card">
             {/* Changed <img> to <LazyImage> */}
-            <LazyImage src="https://www.shutterstock.com/image-vector/combo-offers-labels-promotion-banner-600nw-2076677263.jpg" alt="Exclusive Discounts & Combos" className="benefit-image" />
+            <LazyImage src={Offer} alt="Complete School Book Sets" className="benefit-image" />
             <div className="benefit-text-content">
               <h3>Exclusive Discounts & Combos</h3>
               <p>Save up to 50% with seasonal discounts and combo deals.</p><br></br>
