@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollTop'; // 👈 Add this
+import ScrollTopButton from "./components/ScrollTopButton"; // 👈 Import it
 import Login from './pages/Login';
 import Forgot from './pages/Forgot';
 import Home from './pages/Home';
@@ -40,6 +42,7 @@ function App() {
   return (
     <ErrorBoundary>
       <Router>
+      <ScrollToTop /> {/* 👈 Add here inside Router */}
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -49,6 +52,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/forgot" element={<Forgot />} />
         </Routes>
+        <ScrollTopButton /> {/* 👈 Add it here */}
         <Footer />
       </Router>
     </ErrorBoundary>
