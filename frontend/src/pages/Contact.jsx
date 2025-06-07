@@ -32,16 +32,19 @@ const ContactForm = () => {
 
         {/* Background Image + Info Section */}
         <div className="image-wrapper">
-          <div
-            className="background-image"
-            style={{ backgroundImage: `url(${bgImage})` }}
-          ></div>
+        <div
+  className="background-image"
+  style={{
+    backgroundImage: `url('https://img.freepik.com/free-vector/dna-biotechnology-science-background-vector-blue-futuristic-style-with-blank-space_53876-114114.jpg?semt=ais_hybrid&w=740')`
+  }}
+></div>
+
 
           <div className="contact-info">
             {/* Note: If these phone numbers are different, you might want to adjust them */}
             <InfoItem icon="fas fa-phone" title="Phone" detail="+91 7024136476" />
-            <InfoItem icon="fas fa-phone" title="Phone" detail="+91 7024136476" />
-            <InfoItem icon="fas fa-envelope" title="Email" detail="info@goodluckbookstore.com" />
+            {/* <InfoItem icon="fas fa-phone" title="Phone" detail="+91 7024136476" /> */}
+            <InfoItem icon="fas fa-envelope" title="Email" detail="goodluckbookstorebhopal@gmail.com" />
             <InfoItem icon="fas fa-map-marker-alt" title="Ashoka Garden Store" detail="Shop No. 2, Shriji Tower, Near Manpreet Hotel, New Ashoka Garden, Bhopal, Madhya Pradesh 462023" />
           </div>
         </div>

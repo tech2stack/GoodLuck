@@ -31,8 +31,8 @@ const Footer = () => {
           <h3 className="footer-heading">Contact Us</h3>
           <p>Shop No. 2, Shriji Tower, <br /> Near Manpreet Hotel, New Ashoka Garden, <br /> Bhopal, Madhya Pradesh 462023</p>
           <p><strong>Phone:</strong> +91 7024136476</p>
-          <p><strong>Email:</strong> info@goodluckbookstore.com</p>
-          <p><strong>Hours:</strong> Mon - Sat: 9 AM - 7 PM</p>
+          <p><strong>Email:</strong> goodluckbookstorebhopal@gmail.com</p>
+          <p><strong>Hours:</strong> Mon - Sat: 10 AM - 9 PM</p>
         </div>
 
         <div className="footer-column footer-social">
