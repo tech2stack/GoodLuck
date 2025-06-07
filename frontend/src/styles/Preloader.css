@@ -37,7 +37,7 @@
   /* Bigger text on small screens */
   @media (max-width: 768px) {
     .preloader .animate-stroke {
-      font-size: 25vw; /* Tablets */
+      font-size: 15vw; /* Tablets */
     }
   }
   
