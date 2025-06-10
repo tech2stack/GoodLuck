@@ -73,7 +73,7 @@ const Home = () => {
             <div className="benefit-text-content">
               <h3>Complete School Book Sets</h3>
               <p>Pre-packed sets of textbooks, notebooks, and stationery for major schools.</p><br></br>
-              <button className="benefit-button">Learn More</button>
+              {/* <button className="benefit-button">Learn More</button> */}
             </div>
           </div>
           <div className="benefit-card">
@@ -83,7 +83,7 @@ const Home = () => {
               <h3>Exclusive Discounts & Combos</h3>
               <p>Save up to 50% with seasonal discounts and combo deals.</p><br></br>
               <br />
-              <button className="benefit-button">Learn More</button>
+              {/* <button className="benefit-button">Learn More</button> */}
             </div>
           </div>
           <div className="benefit-card">
@@ -93,7 +93,7 @@ const Home = () => {
               <h3>Home Delivery Service</h3>
               <p>Fast and reliable delivery right to your doorstep.</p>
               <br />  <br />
-              <button className="benefit-button">Learn More</button>
+              {/* <button className="benefit-button">Learn More</button> */}
             </div>
           </div>
         </div>
