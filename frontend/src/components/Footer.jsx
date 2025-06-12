@@ -19,10 +19,11 @@ const Footer = () => {
           <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/about">About Us</a></li>
+            <li><a href="/career">Career</a></li>
             <li><a href="/contact">Contact</a></li>
             <li><a href="/#benefits">Benefits</a></li>
             <li><a href="/#review">Reviews</a></li>
-            
+
             {/* Add more links as your site grows */}
           </ul>
         </div>

@@ -3,12 +3,10 @@ import { Link } from 'react-router-dom';
 import '../styles/Header.css';
 import logoImage from '../assets/logo.jpg';
 
-// Import the LazyImage component
-import LazyImage from './LazyImage'; 
-
-// React Icons
+// Components and Icons
+import LazyImage from './LazyImage';
 import { FaHome, FaUserAlt, FaSignInAlt } from 'react-icons/fa';
-import { MdContactMail } from 'react-icons/md';
+import { MdContactMail, MdWork } from 'react-icons/md'; // Contact + Career Icon
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +18,6 @@ const Header = () => {
     <header className="header">
       <div className="header-left">
         <Link to="/" className="header-logo-link" onClick={closeMenu}>
-          {/* Changed <img> to <LazyImage> for the logo */}
           <LazyImage src={logoImage} alt="Goodluck Book Store Logo" className="header-logo" />
           <h1 className="site-title"><b>Good Luck Book Store</b></h1>
         </Link>
@@ -35,6 +32,10 @@ const Header = () => {
           <Link to="/about" onClick={closeMenu}>
             <FaUserAlt style={{ marginRight: '0.5rem' }} />
             About
+          </Link>
+          <Link to="/career" onClick={closeMenu}>
+            <MdWork style={{ marginRight: '0.5rem' }} />
+            Career
           </Link>
           <Link to="/contact" onClick={closeMenu}>
             <MdContactMail style={{ marginRight: '0.5rem' }} />
