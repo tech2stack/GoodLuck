@@ -1,5 +1,5 @@
 // src/components/Header.js
-import React, { useState, useEffect, useRef } from 'react'; // useRef import kiya
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -8,11 +8,11 @@ import '../styles/Header.css';
 // Logo image ko import karein
 import logoImage from '../assets/logo.jpg';
 // LazyImage component ko import karein
-import LazyImage from './LazyImage';
+import LazyImage from './LazyImage'; // Ensure LazyImage.js exists in the same directory or adjust path
 
 // React Icons ke liye install karein: npm install react-icons
-import { FaHome, FaUserAlt, FaSignInAlt, FaSignOutAlt, FaTachometerAlt } from 'react-icons/fa'; // FaTachometerAlt (Dashboard icon) add kiya
-import { MdContactMail } from 'react-icons/md';
+import { FaHome, FaUserAlt, FaSignInAlt, FaSignOutAlt, FaTachometerAlt } from 'react-icons/fa';
+import { MdContactMail, MdWork } from 'react-icons/md'; // Contact + Career Icon
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false); // Mobile menu state
@@ -21,9 +21,58 @@ const Header = () => {
     const { isLoggedIn, userData, logout } = useAuth();
 
     // Profile dropdown ke liye ref banaya, takki bahar click karne par band ho sake
-    const profileDropdownRef = useRef(null); 
+    const profileDropdownRef = useRef(null);
 
-    // Mobile menu ke liye useEffect (pehle se tha)
+    // Mobile menu toggle function
+    const toggleMenu = () => setIsOpen(!isOpen);
+    // Mobile menu close function
+    const closeMenu = () => setIsOpen(false);
+
+    // Profile dropdown toggle function
+    const toggleProfileDropdown = () => {
+        setIsProfileDropdownOpen(prev => !prev);
+    };
+
+    // Logout handler
+    const handleLogout = () => {
+        logout();
+        closeMenu(); // Mobile menu band karein
+        setIsProfileDropdownOpen(false); // Profile dropdown band karein
+        navigate('/login', { state: { fromLogout: true, message: 'आप सफलतापूर्वक लॉग आउट हो गए हैं!' } });
+    };
+
+    // Dashboard par navigate karne ke liye function
+    const handleDashboard = () => {
+        setIsProfileDropdownOpen(false); // Profile dropdown band karein
+        closeMenu(); // Mobile menu band karein
+        // यहाँ user की भूमिका के आधार पर सही डैशबोर्ड URL सेट करें
+        // उदाहरण के लिए, अगर आपके पास '/super-admin-dashboard' या '/branch-admin-dashboard' हैं
+        if (userData?.role === 'super_admin') {
+            navigate('/superadmin-dashboard');
+        } else if (userData?.role === 'branch_admin') {
+            navigate('/branch-admin-dashboard');
+        } else {
+            // Default dashboard agar koi specific role match na kare
+            navigate('/dashboard');
+        }
+    };
+
+    // User ka naam display karne ke liye helper function
+    const getUserDisplayName = () => {
+        if (userData) {
+            // Agar naam available hai, toh pehle naam dikhayein
+            if (userData.name) {
+                return userData.name;
+            }
+            // Warna username dikhayein
+            if (userData.username) {
+                return userData.username;
+            }
+        }
+        return 'User'; // Fallback
+    };
+
+    // Mobile menu ke liye useEffect (pehle se tha) - jab isLoggedIn status badalta hai to menu close karein
     useEffect(() => {
         if (!isLoggedIn && isOpen) {
             setIsOpen(false);
@@ -42,51 +91,6 @@ const Header = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
-
-    const toggleMenu = () => setIsOpen(!isOpen);
-    const closeMenu = () => setIsOpen(false);
-
-    const toggleProfileDropdown = () => {
-        setIsProfileDropdownOpen(prev => !prev);
-    };
-
-    const handleLogout = () => {
-        logout();
-        closeMenu(); // Mobile menu band karein
-        setIsProfileDropdownOpen(false); // Profile dropdown band karein
-        navigate('/login', { state: { fromLogout: true, message: 'आप सफलतापूर्वक लॉग आउट हो गए हैं!' } });
-    };
-
-    // Dashboard par navigate karne ke liye function
-    const handleDashboard = () => {
-        setIsProfileDropdownOpen(false); // Profile dropdown band karein
-        closeMenu(); // Mobile menu band karein
-        // यहाँ user की भूमिका के आधार पर सही डैशबोर्ड URL सेट करें
-        // उदाहरण के लिए, अगर आपके पास '/super-admin-dashboard' या '/branch-admin-dashboard' हैं
-        if (userData?.role === 'super_admin') {
-            navigate('/superadmin-dashboard'); 
-        } else if (userData?.role === 'branch_admin') {
-            navigate('/branch-admin-dashboard');
-        } else {
-            // Default dashboard agar koi specific role match na kare
-            navigate('/dashboard'); 
-        }
-    };
-
-    // User ka naam display karne ke liye helper function
-    const getUserDisplayName = () => {
-        if (userData) {
-            // Agar naam available hai, toh pehle naam dikhayein
-            if (userData.name) {
-                return userData.name;
-            }
-            // Warna username dikhayein
-            if (userData.username) {
-                return userData.username;
-            }
-        }
-        return 'User'; // Fallback
-    };
 
     return (
         <header className="header">
@@ -107,6 +111,11 @@ const Header = () => {
                         <FaUserAlt style={{ marginRight: '0.5rem' }} />
                         About
                     </Link>
+                    {/* Added Career link back */}
+                    <Link to="/career" onClick={closeMenu}>
+                        <MdWork style={{ marginRight: '0.5rem' }} />
+                        Career
+                    </Link>
                     <Link to="/contact" onClick={closeMenu}>
                         <MdContactMail style={{ marginRight: '0.5rem' }} />
                         Contact
@@ -115,15 +124,14 @@ const Header = () => {
                     {isLoggedIn ? (
                         // Agar logged in hai, toh Welcome text aur Profile icon/dropdown dikhayein
                         <div className="profile-section" ref={profileDropdownRef}>
-                            
                             <div className="profile-icon-container" onClick={toggleProfileDropdown}>
                                 <FaUserAlt className="profile-icon" /> {/* Profile icon */}
+                                <span className="welcome-text">
+                                    Welcome, {getUserDisplayName()}
+                                </span>
                             </div>
                             {isProfileDropdownOpen && (
                                 <div className="profile-dropdown">
-                                  <span className="welcome-text">
-                                Welcome, {getUserDisplayName()}
-                            </span>
                                     <button onClick={handleDashboard} className="dropdown-item">
                                         <FaTachometerAlt style={{ marginRight: '0.5rem' }} /> Dashboard
                                     </button>

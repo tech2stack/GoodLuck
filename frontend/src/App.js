@@ -8,16 +8,22 @@ import { AuthProvider } from './context/AuthContext';
 // आपके मौजूदा components को import करें (paths को adjust करें अगर ज़रूरत हो)
 import Header from './components/Header';
 import Footer from './components/Footer';
+<<<<<<< HEAD
 import ScrollToTop from './components/ScrollTop'; 
 import ScrollTopButton from "./components/ScrollTopButton"; 
 import Preloader from './components/Preloader';
 import ErrorBoundary from './components/ErrorBoundary';
 
 // आपके मौजूदा pages को import करें (paths को adjust करें अगर ज़रूरत हो)
+=======
+import ScrollToTop from './components/ScrollTop';
+import ScrollTopButton from "./components/ScrollTopButton";
+>>>>>>> 0da8c27371fa64eb100050cdc100977da837554d
 import Login from './pages/Login';
 import Forgot from './pages/Forgot';
 import Home from './pages/Home';
 import About from './pages/About';
+import Career from './pages/Career'; // ✅ Correct
 import Contact from './pages/Contact';
 
 // Dashboard Components को उनके संबंधित files से import karein
@@ -64,6 +70,7 @@ function App() {
   return (
     <ErrorBoundary>
       <Router>
+<<<<<<< HEAD
         {/* AuthProvider पूरे Router को wrap करेगा ताकि लॉगिन स्थिति पूरे ऐप में उपलब्ध हो */}
         <AuthProvider> 
           <ScrollToTop /> {/* Router के अंदर ScrollToTop */}
@@ -89,6 +96,21 @@ function App() {
           <ScrollTopButton /> {/* ScrollTopButton */}
           <Footer /> {/* Footer component */}
         </AuthProvider>
+=======
+        <ScrollToTop />
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/career" element={<Career />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot" element={<Forgot />} />
+        </Routes>
+
+        <ScrollTopButton />
+        <Footer />
+>>>>>>> 0da8c27371fa64eb100050cdc100977da837554d
       </Router>
     </ErrorBoundary>
   );
