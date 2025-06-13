@@ -1,0 +1,40 @@
+/*
+ * SuperAdminDashboard.css
+ *
+ * This file is intended for any custom CSS rules that are NOT covered by Tailwind CSS utility classes
+ * used directly in SuperAdminDashboard.js.
+ *
+ * Most of the styling for SuperAdminDashboard.js is applied using Tailwind CSS utility classes
+ * directly in the JSX (e.g., className="bg-gray-50 p-6 rounded-lg shadow-lg").
+ *
+ * If you need to add very specific, non-utility styles, or override Tailwind's defaults
+ * for elements unique to this dashboard, you would add them here.
+ */
+
+/* Example: Custom animation for a dashboard element not easily done with Tailwind's built-in animations */
+.dashboard-fade-in {
+    animation: customFadeIn 0.5s ease-out forwards;
+}
+
+@keyframes customFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+} */
+
+/* Example: Overriding a table specific style if Tailwind's table utilities aren't enough */
+ .dashboard-table-header th {
+    font-weight: 700;
+    color: #4a5568;
+    background-color: #edf2f7;
+    padding: 12px 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #e2e8f0;
+} 
+
+/* You can also define custom classes for elements that are complex or reused */
+ .action-button-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+} 
