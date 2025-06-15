@@ -126,12 +126,15 @@ const Header = () => {
                         <div className="profile-section" ref={profileDropdownRef}>
                             <div className="profile-icon-container" onClick={toggleProfileDropdown}>
                                 <FaUserAlt className="profile-icon" /> {/* Profile icon */}
-                                <span className="welcome-text">
-                                    Welcome, {getUserDisplayName()}
-                                </span>
+                               
                             </div>
                             {isProfileDropdownOpen && (
                                 <div className="profile-dropdown">
+                                     <span className="dropdown-item">
+                                    Welcome,<b>{getUserDisplayName()}</b>
+                                </span>
+
+                                 
                                     <button onClick={handleDashboard} className="dropdown-item">
                                         <FaTachometerAlt style={{ marginRight: '0.5rem' }} /> Dashboard
                                     </button>

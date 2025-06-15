@@ -1,19 +1,17 @@
-// routes/employeeRoutes.js
+// backend/routes/employeeRoutes.js
 const express = require('express');
-const employeeController = require('../controllers/employeeController'); 
-const authMiddleware = require('../middleware/authMiddleware'); 
+const employeeController = require('../controllers/employeeController'); // Assuming this exists
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-module.exports = (models) => {
-    router.route('/')
-        .post(authMiddleware.protect(models), authMiddleware.restrictTo('branch_admin', 'super_admin'), employeeController.createEmployee(models)) 
-        .get(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin', 'branch_admin'), employeeController.getAllEmployees(models)); 
+router.route('/')
+    .post(authMiddleware.protect, authMiddleware.restrictTo('super_admin', 'branch_admin'), employeeController.createEmployee)
+    .get(authMiddleware.protect, authMiddleware.restrictTo('super_admin', 'branch_admin'), employeeController.getAllEmployees);
 
-    router.route('/:id')
-        .get(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin', 'branch_admin', 'employee'), employeeController.getEmployee(models)) 
-        .patch(authMiddleware.protect(models), authMiddleware.restrictTo('branch_admin', 'super_admin'), employeeController.updateEmployee(models)) 
-        .delete(authMiddleware.protect(models), authMiddleware.restrictTo('branch_admin', 'super_admin'), employeeController.deleteEmployee(models)); 
+router.route('/:id') // Correct: ':id' defines a parameter named 'id'
+    .get(authMiddleware.protect, authMiddleware.restrictTo('super_admin', 'branch_admin', 'employee'), employeeController.getEmployee)
+    .patch(authMiddleware.protect, authMiddleware.restrictTo('super_admin', 'branch_admin'), employeeController.updateEmployee)
+    .delete(authMiddleware.protect, authMiddleware.restrictTo('super_admin', 'branch_admin'), employeeController.deleteEmployee);
 
-    return router;
-};
+module.exports = router;

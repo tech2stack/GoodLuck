@@ -1,24 +1,23 @@
-// routes/branchAdminRoutes.js
+// backend/routes/branchAdminRoutes.js
 const express = require('express');
-const branchAdminController = require('../controllers/branchAdminController'); // कंट्रोलर इम्पोर्ट करें
-const authMiddleware = require('../middleware/authMiddleware'); // मिडलवेयर इम्पोर्ट करें
+const branchAdminController = require('../controllers/branchAdminController');
+const authMiddleware = require('../middleware/authMiddleware'); // Renamed from authController for clarity as it's middleware
 
 const router = express.Router();
 
-module.exports = (models) => {
-    // **यहाँ बदलाव है:**
-    // branchAdminController एक फ़ंक्शन है जो कंट्रोलर मेथड्स का ऑब्जेक्ट लौटाता है।
-    // उसे यहाँ models के साथ कॉल करें ताकि आप उसके मेथड्स का उपयोग कर सकें।
-    const controllerMethods = branchAdminController(models);
+// Apply protection and restriction to all routes below this line
+router.use(authMiddleware.protect);
+router.use(authMiddleware.restrictTo('super_admin')); // Only Super Admin can manage Branch Admins
 
-    router.route('/')
-        .post(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin'), controllerMethods.createBranchAdmin) // <-- यहाँ controllerMethods.createBranchAdmin का उपयोग करें
-        .get(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin'), controllerMethods.getAllBranchAdmins); // <-- यहाँ controllerMethods.getAllBranchAdmins का उपयोग करें
+// Routes for base /api/v1/branch-admins
+router.route('/')
+    .post(branchAdminController.createBranchAdmin) // This handles the POST to /api/v1/branch-admins
+    .get(branchAdminController.getAllBranchAdmins);
 
-    router.route('/:id')
-        .get(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin'), controllerMethods.getBranchAdmin) // <-- यहाँ controllerMethods.getBranchAdmin का उपयोग करें
-        .patch(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin'), controllerMethods.updateBranchAdmin) // <-- यहाँ controllerMethods.updateBranchAdmin का उपयोग करें
-        .delete(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin'), controllerMethods.deleteBranchAdmin); // <-- यहाँ controllerMethods.deleteBranchAdmin का उपयोग करें
+// Routes for /api/v1/branch-admins/:id
+router.route('/:id')
+    .get(branchAdminController.getBranchAdmin)
+    .patch(branchAdminController.updateBranchAdmin)
+    .delete(branchAdminController.deleteBranchAdmin);
 
-    return router;
-};
+module.exports = router;

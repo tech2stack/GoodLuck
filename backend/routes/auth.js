@@ -1,12 +1,11 @@
-// routes/auth.js
+// backend/routes/auth.js
 const express = require('express');
-const authController = require('../controllers/authController'); 
+const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-module.exports = (models) => {
-    router.post('/login', authController.login(models)); 
-    router.post('/register-super-admin', authController.registerSuperAdmin(models)); 
+router.post('/login', authController.login);
+router.post('/register-super-admin', authController.registerSuperAdmin);
+router.get('/logout', authController.logout);
 
-    return router;
-};
+module.exports = router;

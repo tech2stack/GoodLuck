@@ -1,0 +1,163 @@
+/* Report.css - Styles for Report Components */
+
+.report-container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-top: 30px;
+    animation: fadeIn 0.6s ease-out; /* Assumed from SuperAdminDashboard.css */
+}
+
+.report-loading, .report-error {
+    padding: 20px;
+    text-align: center;
+    font-size: 1.1em;
+    color: #666;
+}
+
+.report-error {
+    color: #dc3545; /* Red for errors */
+    font-weight: bold;
+}
+
+.report-title {
+    color: #333;
+    font-size: 2em;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.report-description {
+    font-size: 0.95em;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.report-actions {
+    display: flex;
+    gap: 15px; /* Space between buttons */
+    margin-bottom: 25px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    justify-content: flex-start; /* Align buttons to the start */
+}
+
+.report-action-btn,
+.report-actions .btn { /* Apply to buttons within report-actions */
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Space between icon and text */
+    transition: all 0.3s ease;
+    min-width: 180px; /* Ensure buttons have a minimum width */
+    text-decoration: none; /* In case it's an anchor */
+}
+
+/* Specific button styles (can be adapted from Bootstrap-like classes) */
+.btn-info {
+    background-color: #17a2b8; /* Bootstrap info blue */
+    color: white;
+    border: 1px solid #17a2b8;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.btn-success {
+    background-color: #28a745; /* Bootstrap success green */
+    color: white;
+    border: 1px solid #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-primary { /* For download buttons like in BranchOverviewReport */
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.btn-primary:disabled {
+    background-color: #a8d4ff;
+    cursor: not-allowed;
+}
+
+.report-data-display {
+    background-color: #e9ecef;
+    border: 1px dashed #ced4da;
+    border-radius: 8px;
+    padding: 20px;
+    color: #343a40;
+    font-size: 1.1em;
+    line-height: 1.8;
+    margin-top: 20px;
+}
+
+.report-data-display strong {
+    color: #0056b3; /* A strong blue for emphasis */
+}
+
+/* Table styles for reports (e.g., BranchOverviewReport) */
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 8px; /* Rounded corners for the table container */
+    overflow: hidden; /* Ensures content stays within rounded corners */
+}
+
+.report-table th,
+.report-table td {
+    padding: 12px 15px;
+    border: 1px solid #dee2e6; /* Light border for cells */
+    text-align: left;
+}
+
+.report-table th {
+    background-color: #f8f9fa; /* Light grey header */
+    color: #495057;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+.report-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2; /* Zebra striping */
+}
+
+.report-table tbody tr:hover {
+    background-color: #e9ecef; /* Hover effect */
+}
+
+.status-active {
+    color: #28a745; /* Green for active status */
+    font-weight: bold;
+}
+
+.status-inactive {
+    color: #dc3545; /* Red for inactive status */
+    font-weight: bold;
+}
+
+.table-responsive {
+    overflow-x: auto; /* Ensures table is scrollable on small screens */
+    margin-top: 20px;
+    border-radius: 8px; /* Matches container for consistency */
+}

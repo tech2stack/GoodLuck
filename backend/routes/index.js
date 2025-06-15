@@ -1,21 +1,17 @@
-// routes/index.js
+// backend/routes/index.js
+const express = require('express');
 const authRoutes = require('./auth');
 const branchRoutes = require('./branchRoutes');
 const employeeRoutes = require('./employeeRoutes');
 const branchAdminRoutes = require('./branchAdminRoutes');
+const reportRoutes = require('./reportRoutes'); // NEW: Import report routes
 
-// Export a function that accepts the Express app instance and models
-const setupRoutes = (app, models) => {
-    // Pass models to authRoutes setup
-    app.use('/api/v1/auth', authRoutes(models));
+const router = express.Router();
 
-    // Mount branch-related routes
-    app.use('/api/v1/branches', branchRoutes(models));
+router.use('/auth', authRoutes);
+router.use('/branches', branchRoutes);
+router.use('/employees', employeeRoutes);
+router.use('/branch-admins', branchAdminRoutes);
+router.use('/reports', reportRoutes); // NEW: Mount report routes
 
-    // Mount employee-related routes
-    app.use('/api/v1/employees', employeeRoutes(models));
-
-    app.use('/api/v1/branch-admins', branchAdminRoutes(models));
-};
-
-module.exports = setupRoutes;
+module.exports = router;

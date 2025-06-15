@@ -1,12 +1,12 @@
-// frontend/src/components/forms/CreateBranchAdminForm.js
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { FaPlus, FaTimes } from 'react-icons/fa';
 
-const CreateBranchAdminForm = ({ onBranchAdminCreated, onCancel, branches }) => {
+const CreateEmployeeForm = ({ onEmployeeCreated, onCancel, branches }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState(''); // Default to empty string to force selection
     const [branchId, setBranchId] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -31,23 +31,25 @@ const CreateBranchAdminForm = ({ onBranchAdminCreated, onCancel, branches }) => 
         setSuccess(null);
 
         try {
-            // --- CHANGE MADE HERE: Removed '/register' from the URL ---
-            const response = await api.post('/branch-admins', { name, email, password, branchId });
-            // --- END CHANGE ---
-            
-            setSuccess('Branch Admin added successfully!');
-            console.log('New Branch Admin created:', response.data);
+            // --- FIX: Changed API endpoint from '/employees/register' to '/employees' ---
+            const response = await api.post('/employees', { name, email, password, role, branchId });
+            // --- END FIX ---
+
+            setSuccess('Employee added successfully!');
+            console.log('New Employee created:', response.data);
             setName('');
             setEmail('');
             setPassword('');
+            setRole(''); // Reset role
             setBranchId('');
 
-            if (onBranchAdminCreated) {
-                onBranchAdminCreated(response.data.data);
+            if (onEmployeeCreated) {
+                // Ensure correct data structure is passed (assuming backend sends data: { employee: {...} })
+                onEmployeeCreated(response.data.data.employee);
             }
         } catch (err) {
-            console.error('Error creating branch admin:', err.response?.data || err);
-            setError(err.response?.data?.message || 'Failed to add Branch Admin. Make sure email is unique and branch is selected.');
+            console.error('Error creating employee:', err.response?.data || err);
+            setError(err.response?.data?.message || 'Failed to add Employee. Make sure email is unique and branch is selected.');
         } finally {
             setLoading(false);
         }
@@ -55,59 +57,59 @@ const CreateBranchAdminForm = ({ onBranchAdminCreated, onCancel, branches }) => 
 
     return (
         <div className="form-container">
-            <h2 className="form-title">Add New Branch Admin</h2>
+            <h2 className="form-title">Add New Employee</h2>
             <form onSubmit={handleSubmit} className="form-content">
                 {success && <p className="success-message">{success}</p>}
                 {error && <p className="error-message">{error}</p>}
 
                 <div className="form-group">
-                    <label htmlFor="adminName" className="form-label">Name:</label>
+                    <label htmlFor="employeeName" className="form-label">Name:</label>
                     <input
                         type="text"
-                        id="adminName"
+                        id="employeeName"
                         className="form-input"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
-                        aria-label="Branch Admin Name"
+                        aria-label="Employee Name"
                     />
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="adminEmail" className="form-label">Email:</label>
+                    <label htmlFor="employeeEmail" className="form-label">Email:</label>
                     <input
                         type="email"
-                        id="adminEmail"
+                        id="employeeEmail"
                         className="form-input"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        aria-label="Branch Admin Email"
+                        aria-label="Employee Email"
                     />
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="adminPassword" className="form-label">Password:</label>
+                    <label htmlFor="employeePassword" className="form-label">Password:</label>
                     <input
                         type="password"
-                        id="adminPassword"
+                        id="employeePassword"
                         className="form-input"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        aria-label="Branch Admin Password"
+                        aria-label="Employee Password"
                     />
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="adminBranch" className="form-label">Assign Branch:</label>
+                    <label htmlFor="employeeBranch" className="form-label">Assign Branch:</label>
                     <select
-                        id="adminBranch"
+                        id="employeeBranch"
                         className="form-select"
                         value={branchId}
                         onChange={(e) => setBranchId(e.target.value)}
                         required
-                        aria-label="Assign Branch to Admin"
+                        aria-label="Assign Branch to Employee"
                     >
                         <option value="">Select a Branch</option>
                         {branches.map(branch => (
@@ -116,9 +118,27 @@ const CreateBranchAdminForm = ({ onBranchAdminCreated, onCancel, branches }) => 
                     </select>
                 </div>
 
+                <div className="form-group">
+                    <label htmlFor="employeeRole" className="form-label">Role:</label>
+                    <select
+                        id="employeeRole"
+                        className="form-select"
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                        required
+                        aria-label="Employee Role"
+                    >
+                        <option value="">Select Role</option>
+                        <option value="cashier">Cashier</option>
+                        <option value="manager">Manager</option>
+                        <option value="sales">Sales</option>
+                        {/* Ensure these roles are also in your Employee model's enum */}
+                    </select>
+                </div>
+
                 <div className="form-actions">
                     <button type="submit" className="btn btn-primary" disabled={loading}>
-                        {loading ? 'Adding...' : <><FaPlus className="mr-2" /> Add Admin</>}
+                        {loading ? 'Adding...' : <><FaPlus className="mr-2" /> Add Employee</>}
                     </button>
                     <button
                         type="button"
@@ -134,4 +154,4 @@ const CreateBranchAdminForm = ({ onBranchAdminCreated, onCancel, branches }) => 
     );
 };
 
-export default CreateBranchAdminForm;
+export default CreateEmployeeForm;

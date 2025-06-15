@@ -1,4 +1,4 @@
-// models/Employee.js
+// backend/models/Employee.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -28,13 +28,22 @@ const employeeSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        default: 'employee',
-        enum: ['employee']
+        // --- FIX: Expanded enum to include all expected employee roles ---
+        enum: ['employee', 'cashier', 'manager', 'sales'],
+        // --- END FIX ---
+        default: 'employee' // You can set a sensible default
     },
-    branch_id: {
+    // --- FIX: Changed branch_id to branchId for consistency with frontend and controller payload ---
+    branchId: {
         type: mongoose.Schema.ObjectId,
         ref: 'Branch',
         required: [true, 'Please select the branch to which this employee belongs']
+    },
+    // --- END FIX ---
+    status: { // Added status field if not already present
+        type: String,
+        enum: ['active', 'inactive'],
+        default: 'active'
     },
     createdAt: {
         type: Date,
@@ -57,14 +66,18 @@ employeeSchema.pre('save', async function (next) {
 });
 
 // Method to compare entered password with hashed password
-employeeSchema.methods.matchPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
+// --- FIX: Renamed matchPassword to correctPassword for consistency ---
+employeeSchema.methods.correctPassword = async function (enteredPassword, userPassword) {
+    return await bcrypt.compare(enteredPassword, userPassword);
 };
+// --- END FIX ---
 
 // Method to generate JWT token
 employeeSchema.methods.getSignedJwtToken = function () {
     return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE
+        // --- FIX: Corrected env var name for expiresIn ---
+        expiresIn: process.env.JWT_EXPIRES_IN // Should be JWT_EXPIRES_IN, not JWT_EXPIRE
+        // --- END FIX ---
     });
 };
 

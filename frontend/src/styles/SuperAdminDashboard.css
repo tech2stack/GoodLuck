@@ -1,40 +1,721 @@
-/*
- * SuperAdminDashboard.css
- *
- * This file is intended for any custom CSS rules that are NOT covered by Tailwind CSS utility classes
- * used directly in SuperAdminDashboard.js.
- *
- * Most of the styling for SuperAdminDashboard.js is applied using Tailwind CSS utility classes
- * directly in the JSX (e.g., className="bg-gray-50 p-6 rounded-lg shadow-lg").
- *
- * If you need to add very specific, non-utility styles, or override Tailwind's defaults
- * for elements unique to this dashboard, you would add them here.
- */
-
-/* Example: Custom animation for a dashboard element not easily done with Tailwind's built-in animations */
-.dashboard-fade-in {
-    animation: customFadeIn 0.5s ease-out forwards;
+/* General Layout and Background */
+.super-admin-dashboard-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 2.5rem; /* Equivalent to p-10 */
+    background-color: #f9fafb; /* Equivalent to bg-gray-50 */
+    min-height: calc(100vh - 60px); /* Adjust based on header/footer if any */
+    border-radius: 0.75rem; /* Equivalent to rounded-lg */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Equivalent to shadow-lg */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A modern, readable font */
 }
 
-@keyframes customFadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-} */
+/* Titles and Headers */
+.dashboard-title {
+    font-size: 2.5rem; /* Equivalent to text-4xl */
+    font-weight: 700; /* Equivalent to font-bold */
+    text-align: center;
+    color: #1f2937; /* Equivalent to text-gray-800 */
+    margin-bottom: 2.5rem; /* Equivalent to mb-10 */
+    letter-spacing: -0.025em; /* Slightly tighter for headings */
+}
 
-/* Example: Overriding a table specific style if Tailwind's table utilities aren't enough */
- .dashboard-table-header th {
-    font-weight: 700;
-    color: #4a5568;
-    background-color: #edf2f7;
-    padding: 12px 24px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 2px solid #e2e8f0;
-} 
+.table-title, .form-title {
+    font-size: 2rem; /* Equivalent to text-3xl */
+    font-weight: 600; /* Equivalent to font-semibold */
+    color: #374151; /* Equivalent to text-gray-700 */
+    margin-bottom: 1.5rem; /* Equivalent to mb-6 */
+}
 
-/* You can also define custom classes for elements that are complex or reused */
- .action-button-group {
+/* Welcome Message Card */
+.welcome-message-card {
+    background-color: #e0f2fe; /* Equivalent to bg-blue-100 */
+    border-left: 4px solid #3b82f6; /* Equivalent to border-l-4 border-blue-500 */
+    color: #1d4ed8; /* Equivalent to text-blue-700 */
+    padding: 1rem; /* Equivalent to p-4 */
+    margin-bottom: 2rem; /* Equivalent to mb-8 */
+    border-radius: 0.375rem; /* Equivalent to rounded-md */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Equivalent to shadow-sm */
+}
+
+.welcome-text {
+    font-weight: 600; /* Equivalent to font-semibold */
+    font-size: 1.125rem; /* Equivalent to text-lg */
+}
+
+/* Action Buttons Grid */
+.main-actions-grid {
     display: flex;
-    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem; /* Equivalent to gap-6 */
+    margin-bottom: 2.5rem; /* Equivalent to mb-10 */
+}
+
+.action-button {
+    display: flex;
     align-items: center;
-} 
+    gap: 0.5rem; /* Equivalent to gap-2 */
+    font-weight: 700; /* Equivalent to font-bold */
+    padding: 0.75rem 1.5rem; /* Equivalent to py-3 px-6 */
+    border-radius: 0.5rem; /* Equivalent to rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Equivalent to shadow-md */
+    transition: transform 0.2s ease-in-out; /* Equivalent to transition-transform duration-200 */
+    transform: scale(1); /* Reset for hover effect */
+    color: white;
+    text-decoration: none; /* In case it's a link in future */
+    border: none; /* Remove default button border */
+    cursor: pointer;
+}
+
+.action-button:hover {
+    transform: scale(1.05); /* Equivalent to hover:scale-105 */
+}
+
+.action-button .icon {
+    font-size: 1.25rem; /* Equivalent to text-xl */
+}
+
+/* Specific Button Colors */
+.home-button {
+    background-color: #4b5563; /* Equivalent to bg-gray-600 */
+}
+.home-button:hover {
+    background-color: #374151; /* Equivalent to hover:bg-gray-700 */
+}
+
+.branch-button {
+    background-color: #9333ea; /* Equivalent to bg-purple-600 */
+}
+.branch-button:hover {
+    background-color: #7e22ce; /* Equivalent to hover:bg-purple-700 */
+}
+
+.admin-button {
+    background-color: #4f46e5; /* Equivalent to bg-indigo-600 */
+}
+.admin-button:hover {
+    background-color: #4338ca; /* Equivalent to hover:bg-indigo-700 */
+}
+
+.employee-button {
+    background-color: #0d9488; /* Equivalent to bg-teal-600 */
+}
+.employee-button:hover {
+    background-color: #0f766e; /* Equivalent to hover:bg-teal-700 */
+}
+
+/* Dropdown Styles */
+.relative-dropdown {
+    position: relative;
+}
+
+.dropdown-arrow {
+    margin-left: 0.5rem; /* Equivalent to ml-2 */
+    transition: transform 0.2s ease-in-out;
+}
+
+.dropdown-menu {
+    position: absolute;
+    left: 0;
+    margin-top: 0.5rem; /* Equivalent to mt-2 */
+    width: 12rem; /* Equivalent to w-48 */
+    background-color: #fff;
+    border-radius: 0.5rem; /* Equivalent to rounded-lg */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Equivalent to shadow-xl */
+    padding-top: 0.5rem; /* Equivalent to py-2 */
+    padding-bottom: 0.5rem;
+    z-index: 10;
+    border: 1px solid #e5e7eb; /* Equivalent to border border-gray-200 */
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem 1rem; /* Equivalent to px-4 py-2 */
+    color: #374151; /* Equivalent to text-gray-800 */
+    font-size: 0.9375rem; /* Slightly smaller for dropdown items */
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    border-radius: 0.375rem; /* rounded-md */
+}
+
+.dropdown-item:hover {
+    background-color: #f3f4f6; /* Equivalent to hover:bg-gray-100 */
+}
+
+/* Summary Section */
+.summary-section {
+    text-align: center;
+    color: #4b5563; /* Equivalent to text-gray-600 */
+    font-size: 1.125rem; /* Equivalent to text-lg */
+    padding: 2rem; /* Equivalent to p-8 */
+    background-color: #fff;
+    border-radius: 0.5rem; /* Equivalent to rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Equivalent to shadow-md */
+    margin-bottom: 2.5rem; /* Added for spacing */
+}
+
+.summary-cards-grid {
+    margin-top: 2rem; /* Equivalent to mt-8 */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; /* Equivalent to justify-around */
+    align-items: center;
+    gap: 1.5rem; /* Equivalent to gap-6 */
+}
+
+.summary-card {
+    text-align: center;
+    padding: 1rem; /* Equivalent to p-4 */
+    background-color: #f3f4f6; /* Equivalent to bg-gray-100 */
+    border-radius: 0.5rem; /* Equivalent to rounded-lg */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Equivalent to shadow-sm */
+    width: 12rem; /* Equivalent to w-48 */
+    min-width: 180px; /* Ensure cards don't get too small */
+}
+
+.summary-icon {
+    font-size: 3.125rem; /* Equivalent to text-5xl */
+    margin: 0 auto 0.5rem auto; /* Equivalent to mx-auto mb-2 */
+}
+
+.summary-icon.purple { color: #9333ea; }
+.summary-icon.indigo { color: #4f46e5; }
+.summary-icon.teal { color: #0d9488; }
+
+.summary-text {
+    font-size: 1.125rem; /* Equivalent to text-xl */
+    font-weight: 600; /* Equivalent to font-semibold */
+    color: #374151; /* Deeper gray for text */
+}
+
+.summary-count {
+    font-size: 1.5rem; /* Larger for counts */
+    font-weight: 700;
+    color: #1f2937;
+}
+
+/* Table Section */
+.table-section {
+    background-color: #fff;
+    padding: 1.5rem; /* Equivalent to p-6 */
+    border-radius: 0.5rem; /* Equivalent to rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Equivalent to shadow-md */
+    margin-bottom: 2.5rem;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.no-data-message {
+    color: #4b5563; /* Equivalent to text-gray-600 */
+    text-align: center;
+    padding: 1rem;
+    font-size: 1rem;
+}
+
+.table-responsive {
+    overflow-x: auto; /* For responsive tables on smaller screens */
+}
+
+.data-table {
+    min-width: 100%;
+    background-color: #fff;
+    border: 1px solid #e5e7eb; /* Equivalent to border border-gray-200 */
+    border-radius: 0.5rem; /* Equivalent to rounded-lg */
+    overflow: hidden; /* Ensures rounded corners apply to content */
+    border-collapse: separate; /* Required for border-radius on table */
+    border-spacing: 0; /* Remove space between cells */
+}
+
+.table-head {
+    background-color: #f3f4f6; /* Equivalent to bg-gray-100 */
+    border-bottom: 1px solid #e5e7eb; /* Equivalent to border-b border-gray-200 */
+}
+
+.table-th {
+    padding: 0.75rem 1.5rem; /* Equivalent to px-6 py-3 */
+    text-align: left;
+    font-size: 0.75rem; /* Equivalent to text-xs */
+    font-weight: 500; /* Equivalent to font-medium */
+    color: #6b7280; /* Equivalent to text-gray-500 */
+    text-transform: uppercase;
+    letter-spacing: 0.05em; /* Equivalent to tracking-wider */
+}
+
+.table-th.actions-th {
+    text-align: center; /* Center actions column header */
+}
+
+.table-body .table-row:hover {
+    background-color: #f9fafb; /* Equivalent to hover:bg-gray-50 */
+}
+
+.table-td {
+    padding: 1rem 1.5rem; /* Equivalent to px-6 py-4 */
+    white-space: nowrap;
+    font-size: 0.875rem; /* Equivalent to text-sm */
+    color: #374151; /* Equivalent to text-gray-700 */
+}
+
+.table-td.font-medium {
+    font-weight: 500; /* Equivalent to font-medium */
+    color: #1f2937; /* Equivalent to text-gray-900 */
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem; /* Equivalent to px-2 inline-flex */
+    display: inline-flex;
+    font-size: 0.75rem; /* Equivalent to text-xs */
+    line-height: 1.25rem; /* Equivalent to leading-5 */
+    font-weight: 600; /* Equivalent to font-semibold */
+    border-radius: 9999px; /* Equivalent to rounded-full */
+}
+
+.status-active {
+    background-color: #d1fae5; /* Equivalent to bg-green-100 */
+    color: #065f46; /* Equivalent to text-green-800 */
+}
+
+.status-inactive {
+    background-color: #fee2e2; /* Equivalent to bg-red-100 */
+    color: #991b1b; /* Equivalent to text-red-800 */
+}
+
+.action-buttons {
+    text-align: center; /* Center content in action cells */
+}
+
+.action-icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem; /* Adjust icon size */
+    margin: 0 0.5rem; /* Spacing between buttons */
+    padding: 0.25rem; /* Make clickable area larger */
+    transition: color 0.2s ease-in-out;
+}
+
+.action-icon-button.edit-button {
+    color: #4f46e5; /* Equivalent to text-indigo-600 */
+}
+.action-icon-button.edit-button:hover {
+    color: #3730a3; /* Equivalent to hover:text-indigo-900 */
+}
+
+.action-icon-button.delete-button {
+    color: #dc2626; /* Equivalent to text-red-600 */
+}
+.action-icon-button.delete-button:hover {
+    color: #991b1b; /* Equivalent to hover:text-red-900 */
+}
+
+/* Form Styles (for Create/Update forms) */
+.form-container {
+    max-width: 600px; /* Equivalent to max-w-xl */
+    margin: 0 auto 2.5rem auto; /* mx-auto mb-10 */
+    padding: 1.5rem; /* p-6 */
+    background-color: #fff;
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+    border: 1px solid #e5e7eb; /* border border-gray-200 */
+    text-align: center;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem; /* gap-5 */
+    margin-top: 1.5rem;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500; /* font-medium */
+    color: #374151; /* text-gray-700 */
+    margin-bottom: 0.5rem;
+}
+
+.form-input, .form-select {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem; /* py-2 px-3 */
+    border: 1px solid #d1d5db; /* border border-gray-300 */
+    border-radius: 0.375rem; /* rounded-md */
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); /* shadow-sm */
+    font-size: 1rem;
+    color: #1f2937; /* text-gray-900 */
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: #4f46e5; /* focus:border-indigo-500 */
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); /* focus:ring-indigo-500 focus:ring-opacity-50 */
+}
+
+.form-select {
+    appearance: none; /* Remove default arrow */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%236b7280'%3e%3cpath d='M7 7l3 3 3-3m0 6l-3-3-3 3' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.8rem 0.8rem;
+    padding-right: 2.5rem; /* Make space for custom arrow */
+}
+
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem; /* space-x-4 */
+    margin-top: 1.5rem;
+}
+
+.btn {
+    font-weight: 700; /* font-bold */
+    padding: 0.75rem 1.5rem; /* py-3 px-6 */
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem; /* flex items-center */
+    cursor: pointer;
+    border: none;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: #4f46e5; /* bg-indigo-600 */
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #4338ca; /* hover:bg-indigo-700 */
+    transform: scale(1.02);
+}
+
+.btn-secondary {
+    background-color: #6b7280; /* bg-gray-500 */
+    color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #4b5563; /* hover:bg-gray-600 */
+    transform: scale(1.02);
+}
+
+/* Messages */
+.success-message {
+    background-color: #d1fae5; /* bg-green-100 */
+    color: #065f46; /* text-green-800 */
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.error-message {
+    background-color: #fee2e2; /* bg-red-100 */
+    color: #991b1b; /* text-red-800 */
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+/* Loading and Error Screens */
+.loading-screen, .error-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+}
+
+.loading-screen p {
+    color: #4b5563; /* text-gray-700 */
+}
+
+.error-screen p {
+    color: #dc2626; /* text-red-600 */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .main-actions-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .action-button {
+        width: 100%;
+        max-width: 250px; /* Constrain width on small screens */
+    }
+
+    .dropdown-menu {
+        width: 100%; /* Make dropdown full width of parent button */
+        position: static; /* Stack on smaller screens */
+        box-shadow: none; /* Remove shadow if stacked */
+        border: none;
+        padding: 0.25rem;
+    }
+
+    .summary-cards-grid {
+        flex-direction: column;
+    }
+    .summary-card {
+        width: 100%;
+        max-width: 250px; /* Constrain width on small screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .super-admin-dashboard-container {
+        padding: 1rem;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+    }
+
+    .table-section {
+        padding: 1rem;
+    }
+
+    .form-container {
+        padding: 1rem;
+    }
+}
+/* --- NEW & IMPROVED CSS for Flash Messages --- */
+.flash-message {
+    /* Positioning & Layout */
+    position: fixed; /* Keep it fixed for top-right corner */
+    top: 80px; /* 50px margin from the top, adjust if your header is taller */
+    right: 20px; /* 20px margin from the right */
+    max-width: 90%; /* Max width for general responsiveness */
+    width: fit-content; /* Make width fit content, prevents stretching */
+    min-width: 250px; /* Minimum width to ensure readability */
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    z-index: 2000; /* High z-index to ensure it's always on top */
+    font-weight: 600;
+    font-size: 1rem;
+    box-sizing: border-box; /* Include padding in width */
+
+    /* Initial State for Animation (hidden and slightly to the right) */
+    opacity: 0;
+    transform: translateX(100%);
+
+    /* Transition for smooth animation */
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+/* State when message is active/visible */
+.flash-message.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Exit animation (optional, but good for smooth disappearance) */
+.flash-message.hide {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+.flash-message-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-grow: 1; /* Allows content to take available space */
+    word-break: break-word; /* Ensures long text breaks properly */
+    white-space: normal; /* Allows text to wrap */
+}
+
+.flash-message-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0; /* Prevents icon from shrinking */
+}
+
+.flash-message p {
+    margin: 0; /* Remove default paragraph margin */
+}
+
+.flash-message-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: inherit; /* Inherit color from parent message type */
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+    flex-shrink: 0; /* Prevents button from shrinking */
+}
+
+.flash-message-close-btn:hover {
+    opacity: 1;
+}
+
+/* Specific styles for success message */
+.flash-message-success {
+    background-color: #d1fae5; /* Tailwind bg-green-100 */
+    color: #065f46; /* Tailwind text-green-800 */
+    border: 1px solid #34d399; /* Tailwind border-green-400 */
+}
+
+/* Specific styles for error message */
+.flash-message-error {
+    background-color: #fee2e2; /* Tailwind bg-red-100 */
+    color: #991b1b; /* Tailwind text-red-800 */
+    border: 1px solid #ef4444; /* Tailwind border-red-400 */
+}
+
+/* --- Keep the Confirmation Dialog CSS as is, or adjust z-index if needed --- */
+.confirm-dialog-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001; /* Should be lower than flash message */
+}
+
+.confirm-dialog-content {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    animation: fadeInScale 0.3s ease-out forwards;
+}
+
+/* Responsive adjustments for flash messages */
+@media (max-width: 768px) {
+    .flash-message {
+        top: 20px; /* Slightly less margin from top on smaller screens */
+        right: 10px; /* Closer to the right edge on smaller screens */
+        left: 10px; /* Keep it aligned with left edge, maintaining max-width */
+        max-width: calc(100% - 20px); /* Adjust max-width for smaller screens */
+        transform: translateX(0); /* On mobile, initially appear centered if needed, or maintain right-aligned */
+        min-width: unset; /* Remove min-width on small screens */
+    }
+
+    /* Adjust transform for mobile entry/exit if needed */
+    .flash-message.show {
+        transform: translateX(0);
+    }
+    .flash-message.hide {
+        transform: translateX(100%); /* Still animate out to the right */
+    }
+}
+
+/* ... (existing CSS for .reports-section, .table-title, etc.) */
+
+.report-content {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.report-description {
+    font-size: 0.95em;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.report-actions {
+    display: flex;
+    gap: 15px; /* Space between buttons */
+    margin-bottom: 25px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.report-action-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Space between icon and text */
+    transition: all 0.3s ease;
+    min-width: 180px; /* Ensure buttons have a minimum width */
+}
+
+.report-action-btn.btn-info {
+    background-color: #17a2b8; /* Bootstrap info blue */
+    color: white;
+    border: 1px solid #17a2b8;
+}
+
+.report-action-btn.btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.report-action-btn.btn-success {
+    background-color: #28a745; /* Bootstrap success green */
+    color: white;
+    border: 1px solid #28a745;
+}
+
+.report-action-btn.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.report-data-display {
+    background-color: #e9ecef;
+    border: 1px dashed #ced4da;
+    border-radius: 8px;
+    padding: 20px;
+    color: #343a40;
+    font-size: 1.1em;
+    line-height: 1.8;
+}
+
+.report-data-display strong {
+    color: #0056b3; /* A strong blue for emphasis */
+}
+
+.error-message {
+    color: #dc3545; /* Red for errors */
+    font-weight: bold;
+    margin-top: 15px;
+}

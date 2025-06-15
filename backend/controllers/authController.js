@@ -1,96 +1,116 @@
-// controllers/authController.js
-const catchAsync = require('../utils/catchAsync');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs'); // Assuming you use bcryptjs for password hashing
 const AppError = require('../utils/appError');
-const sendToken = require('../utils/jwtToken'); // Ensure this file exists
+const catchAsync = require('../utils/catchAsync');
+const SuperAdmin = require('../models/SuperAdmin');
+const BranchAdmin = require('../models/BranchAdmin');
+const Employee = require('../models/Employee');
 
-// Ensure you have imported these models:
-// const SuperAdmin = require('../models/SuperAdmin');
-// const BranchAdmin = require('../models/BranchAdmin'); // If it's a separate model
-// const Employee = require('../models/Employee');
+// Helper function to sign the JWT token
+const signToken = id => {
+    // These console logs are good for debugging, keep them for now if needed,
+    // otherwise, you can remove them after confirming the fix.
+    console.log('DEBUG: JWT_EXPIRES_IN value:', process.env.JWT_EXPIRES_IN);
+    console.log('DEBUG: Type of JWT_EXPIRES_IN:', typeof process.env.JWT_EXPIRES_IN);
 
+    // Ensure JWT_EXPIRES_IN is provided. If not, use a default (e.g., '90d' for 90 days)
+    const expiresIn = process.env.JWT_EXPIRES_IN || '90d'; 
 
-// --- General Login (For both SuperAdmin and Employee) ---
-// This function takes a 'models' object as a parameter and returns an Express middleware
-exports.login = (models) => catchAsync(async (req, res, next) => {
-    const SuperAdmin = models.SuperAdmin; // Access SuperAdmin model from models object
-    const Employee = models.Employee;     // Access Employee model from models object
-    const BranchAdmin = models.BranchAdmin; // Access BranchAdmin model from models object
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: expiresIn
+    });
+};
 
-    const { loginId, password, role } = req.body; // 'loginId' can be email or username
+// Helper function to create JWT and send it in a cookie
+const createSendToken = (user, statusCode, res) => {
+    const token = signToken(user._id);
 
-    // 1) Check if loginId, password, and role are provided
-    if (!loginId || !password || !role) {
-        console.log('Auth Controller: Login attempt failed: Missing loginId, password, or role'); // Debug log
-        return next(new AppError('Please provide username/email, password, and role.', 400));
-    }
+    // --- FIX START: Robust cookie expiration calculation ---
+    // Ensure JWT_COOKIE_EXPIRES_IN is parsed as an integer.
+    // Use a fallback (e.g., 90 days) if the environment variable is missing or invalid.
+    const cookieExpiresInDays = parseInt(process.env.JWT_COOKIE_EXPIRES_IN, 10);
+    const validCookieExpiresInDays = isNaN(cookieExpiresInDays) ? 90 : cookieExpiresInDays; // Default to 90 if invalid
 
-    let user;
-    let Model; // The model we will use (SuperAdmin, Employee, or BranchAdmin)
+    // Calculate cookie expiration date
+    const cookieExpirationDate = new Date(
+        Date.now() + validCookieExpiresInDays * 24 * 60 * 60 * 1000
+    );
 
-    // 2) Based on role, choose the correct model and find the user
-    if (role === 'super_admin') {
-        Model = SuperAdmin;
-        user = await Model.findOne({ username: loginId }).select('+password');
-    } else if (role === 'employee') {
-        Model = Employee;
-        user = await Model.findOne({ email: loginId }).select('+password');
-    } else if (role === 'branch_admin') { // Separate login for BranchAdmin
-        Model = BranchAdmin;
-        user = await Model.findOne({ email: loginId }).select('+password');
-    } else {
-        console.log('Auth Controller: Login attempt failed: Invalid role provided:', role); // Debug log
-        return next(new AppError('Invalid role provided.', 400));
-    }
-
-    // 3) Check if user exists and password is correct
-    if (!user || !(await user.matchPassword(password))) {
-        console.log('Auth Controller: Login attempt failed: Invalid credentials for user:', loginId); // Debug log
-        return next(new AppError('Invalid credentials', 401)); // 401 Unauthorized
-    }
-
-    // 4) If everything is correct, send the token
-    // Ensure the 'user' object in the response includes the 'role' field
-    // Mongoose documents may omit virtual or unselected fields unless explicitly included
-    const userResponseData = {
-        _id: user._id,
-        name: user.name,
-        loginId: user.username || user.email,
-        role: user.role, // <--- This key is important! Be sure to include it
+    const cookieOptions = {
+        expires: cookieExpirationDate,
+        httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+        secure: process.env.NODE_ENV === 'production', // Send cookie only over HTTPS in production
+        sameSite: 'Lax' // Recommended for CSRF protection and modern browser compatibility
     };
+    // --- FIX END ---
 
-    console.log('Auth Controller: Login successful for:', userResponseData.loginId, 'Role:', userResponseData.role); // Debug log
+    res.cookie('jwt', token, cookieOptions);
 
-    // Send JWT token (ensures the token is set in an HttpOnly cookie)
-    // Use sendToken utility function, which takes user object and status code in response
-    sendToken(user, 200, res);
-    // sendToken usually ends the response after setting the cookie,
-    // so no need to call res.status().json() again unless sendToken behaves differently
-    // If sendToken only creates the token, you can send it like this:
-    // res.status(200).json({
-    //     success: true,
-    //     user: userResponseData,
-    //     token: user.getSignedJwtToken() // If this method exists on your user model
-    // });
+    // Remove password from output before sending response
+    user.password = undefined;
+
+    res.status(statusCode).json({
+        status: 'success',
+        token,
+        data: {
+            user
+        }
+    });
+};
+
+exports.login = catchAsync(async (req, res, next) => {
+    const { identifier, password } = req.body; // Use 'identifier' to cover username/email
+
+    if (!identifier || !password) {
+        return next(new AppError('Please provide email/username and password!', 400));
+    }
+
+    // Check if user exists and password is correct across different roles
+    let user = await SuperAdmin.findOne({ $or: [{ username: identifier }, { email: identifier }] }).select('+password');
+    if (!user) {
+        user = await BranchAdmin.findOne({ email: identifier }).select('+password');
+    }
+    if (!user) {
+        user = await Employee.findOne({ email: identifier }).select('+password');
+    }
+
+    if (!user || !(await user.correctPassword(password, user.password))) {
+        return next(new AppError('Incorrect credentials (email/username or password)', 401));
+    }
+
+    createSendToken(user, 200, res);
 });
 
+exports.registerSuperAdmin = catchAsync(async (req, res, next) => {
+    const { name, username, email, password } = req.body;
 
-// --- Super Admin Registration (Only for initial setup) ---
-exports.registerSuperAdmin = (models) => catchAsync(async (req, res, next) => {
-    const SuperAdmin = models.SuperAdmin;
+    if (!name || !username || !email || !password) {
+        return next(new AppError('Please provide name, username, email, and password.', 400));
+    }
 
-    const { name, username, password } = req.body;
-
-    const existingSuperAdmin = await SuperAdmin.findOne({ username });
+    const existingSuperAdmin = await SuperAdmin.findOne({ $or: [{ username }, { email }] });
     if (existingSuperAdmin) {
-        return next(new AppError('A Super Admin with this username already exists.', 409));
+        return next(new AppError('A Super Admin with this username or email already exists.', 409));
     }
 
     const newSuperAdmin = await SuperAdmin.create({
         name,
         username,
-        password
+        email,
+        password,
+        role: 'super_admin',
+        status: 'active'
     });
 
-    console.log('Auth Controller: Super Admin registered:', newSuperAdmin.username);
-    sendToken(newSuperAdmin, 201, res);
+    createSendToken(newSuperAdmin, 201, res);
 });
+
+exports.logout = (req, res) => {
+    res.cookie('jwt', 'loggedout', {
+        expires: new Date(Date.now() + 10 * 1000), // Expires in 10 seconds to clear immediately
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Lax'
+    });
+    res.status(200).json({ status: 'success' });
+};

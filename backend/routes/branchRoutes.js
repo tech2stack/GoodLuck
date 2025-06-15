@@ -1,23 +1,16 @@
-// routes/branchRoutes.js
 const express = require('express');
-const branchController = require('../controllers/branchController'); // Import the controller
-const authMiddleware = require('../middleware/authMiddleware'); // Import the auth middleware
+const branchController = require('../controllers/branchController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-module.exports = (models) => {
-    // FIX: Call branchController with models to get the object of controller methods
-    const controllerMethods = branchController(models);
+router.route('/')
+    .post(authMiddleware.protect, authMiddleware.restrictTo('super_admin'), branchController.createBranch)
+    .get(authMiddleware.protect, authMiddleware.restrictTo('super_admin', 'branch_admin', 'employee'), branchController.getAllBranches);
 
-    router.route('/')
-        // Use the methods from the controllerMethods object
-        .post(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin'), controllerMethods.createBranch)
-        .get(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin'), controllerMethods.getAllBranches);
+router.route('/:id') // <-- This path is crucial. It must be exactly ':id'
+    .get(authMiddleware.protect, authMiddleware.restrictTo('super_admin', 'branch_admin', 'employee'), branchController.getBranch)
+    .patch(authMiddleware.protect, authMiddleware.restrictTo('super_admin'), branchController.updateBranch) // <-- Ensure .patch is here and points to updateBranch
+    .delete(authMiddleware.protect, authMiddleware.restrictTo('super_admin'), branchController.deleteBranch);
 
-    router.route('/:id')
-        .get(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin'), controllerMethods.getBranch)
-        .patch(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin'), controllerMethods.updateBranch)
-        .delete(authMiddleware.protect(models), authMiddleware.restrictTo('super_admin'), controllerMethods.deleteBranch);
-
-    return router;
-};
+module.exports = router;

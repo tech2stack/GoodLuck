@@ -1,60 +1,56 @@
-require('dotenv').config(); // Load environment variables from .env file
-const express = require('express');
-const cors = require('cors'); // To allow cross-origin requests from your frontend
-const { centralDbConnection } = require('./config/db'); // Import DB connection function
-const setupRoutes = require('./routes/index'); // Import centralized route setup
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 
-const app = express();
-
-// --- Connect to the central database ---
-// This connection will handle the SuperAdmin and Branch models
-centralDbConnection.on('connected', () => {
-    console.log(`Central MongoDB connected: ${centralDbConnection.host} (DB: ${centralDbConnection.name})`);
+// --- Handle Uncaught Exceptions ---
+// This should be at the very top of your server.js to catch sync errors
+process.on('uncaughtException', err => {
+    console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+    console.error(err.name, err.message, err.stack);
+    process.exit(1); // Exit with failure code
 });
 
-centralDbConnection.on('error', (err) => {
-    console.error(`Central MongoDB connection error: ${err.message}`);
+// Load environment variables from the .env file
+// dotenv.config() without a path argument will default to looking for '.env'
+dotenv.config(); // <-- This is the crucial change!
+
+const app = require('./app'); // Import your Express app setup from app.js
+
+// MongoDB Connection
+// Use MONGO_URI directly from process.env
+const DB_URI = process.env.MONGO_URI; 
+
+// Check if MONGO_URI is defined
+if (!DB_URI) {
+    console.error('FATAL ERROR: MONGO_URI is not defined in your .env file!');
     process.exit(1);
+}
+
+mongoose.connect(DB_URI) // Connect using the MONGO_URI
+  .then(() => console.log('DB connection successful! Connected to local MongoDB.'))
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1); // Exit if DB connection fails
+  });
+
+const port = process.env.PORT || 5000;
+const server = app.listen(port, () => {
+    console.log(`Server is running on port ${port} in ${process.env.NODE_ENV} mode`);
 });
 
-
-// --- Middleware ---
-app.use(express.json()); // Body parser for JSON data (to read data sent in request body)
-
-// CORS Configuration Update:
-// Wildcard '*' is not allowed with 'credentials: true'.
-// Therefore, you must allow a specific origin.
-const corsOptions = {
-    origin: 'http://localhost:3000', // Frontend URL (where your React app is running)
-    credentials: true, // Allow cookies (HttpOnly JWT)
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], // Allowed HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-};
-app.use(cors(corsOptions)); // Configure CORS middleware
-
-// --- Register global models with the central DB connection ---
-// These models will always use the central database
-const SuperAdmin = centralDbConnection.model('SuperAdmin', require('./models/SuperAdmin').schema); // SuperAdmin model
-const Employee = centralDbConnection.model('Employee', require('./models/Employee').schema); // Employee model (not used yet)
-const Branch = centralDbConnection.model('Branch', require('./models/Branch').schema); // Branch model
-
-// Pass models to the routes setup function
-const models = { SuperAdmin, Employee, Branch }; // Include SuperAdmin in models
-
-// --- Routes ---
-app.get('/', (req, res) => {
-    res.send('Library Admin Backend is running! Central DB is connected.');
+// --- Handle Unhandled Promise Rejections ---
+// Catches async errors that are not handled by catchAsync
+process.on('unhandledRejection', err => {
+    console.error('UNHANDLED REJECTION! 💥 Shutting down...');
+    console.error(err.name, err.message, err.stack);
+    server.close(() => { // Close server gracefully
+        process.exit(1); // Exit with failure code
+    });
 });
 
-setupRoutes(app, models); // Call function to set up all routes, passing models
-
-// --- Error handling middleware (to be created later) ---
-// If you want to use a global error handler, define it here after all routes
-// const { errorHandler } = require('./middleware/errorHandler');
-// app.use(errorHandler);
-
-const PORT = process.env.PORT || 5000; // Use port from .env or default to 5000
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+// For Render.com or other PaaS that might send SIGTERM
+process.on('SIGTERM', () => {
+    console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+    server.close(() => {
+        console.log('💥 Process terminated!');
+    });
 });

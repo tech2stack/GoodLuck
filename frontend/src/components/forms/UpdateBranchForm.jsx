@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'; // Import useEffect
-import api from '../../services/api';
-import { FaPlus, FaTimes } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import api from '../../services/api'; // Make sure your api service is correctly configured
+import { FaSave, FaTimes } from 'react-icons/fa';
 
-const CreateBranchForm = ({ onBranchCreated, onCancel }) => {
+const UpdateBranchForm = ({ branchData, onBranchUpdated, onCancel }) => {
     const [name, setName] = useState('');
     const [location, setLocation] = useState('');
     const [status, setStatus] = useState('active');
@@ -10,7 +10,16 @@ const CreateBranchForm = ({ onBranchCreated, onCancel }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
-    // Effect to clear success/error messages after a delay
+    // Populate form fields with existing branch data when component mounts or branchData changes
+    useEffect(() => {
+        if (branchData) {
+            setName(branchData.name || '');
+            setLocation(branchData.location || '');
+            setStatus(branchData.status || 'active');
+        }
+    }, [branchData]);
+
+    // Effect to clear success/error messages after a delay (flash messages)
     useEffect(() => {
         let timer;
         if (success || error) {
@@ -20,7 +29,7 @@ const CreateBranchForm = ({ onBranchCreated, onCancel }) => {
             }, 5000); // Clear after 5 seconds
         }
         return () => clearTimeout(timer); // Cleanup timer if component unmounts
-    }, [success, error]); // Re-run effect when success or error changes
+    }, [success, error]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,20 +38,18 @@ const CreateBranchForm = ({ onBranchCreated, onCancel }) => {
         setSuccess(null); // Clear previous successes
 
         try {
-            const response = await api.post('/branches', { name, location, status });
-            setSuccess('Branch added successfully!');
-            console.log('New branch created:', response.data);
-            setName(''); // Clear form
-            setLocation(''); // Clear form
-            setStatus('active'); // Reset status
+            // The API call for update: ensure it's a PATCH or PUT to the correct endpoint
+            // It should be /branches/:id
+            const response = await api.patch(`/branches/${branchData._id}`, { name, location, status }); // <-- Using PATCH here
+            setSuccess('Branch updated successfully!');
+            console.log('Branch updated:', response.data);
 
-            if (onBranchCreated) {
-                onBranchCreated(response.data.data); // Notify parent component (SuperAdminDashboard)
+            if (onBranchUpdated) {
+                onBranchUpdated(response.data.data); // Notify parent component (SuperAdminDashboard)
             }
         } catch (err) {
-            console.error('Error creating branch:', err.response?.data || err);
-            // Capture the specific backend message or a generic one
-            setError(err.response?.data?.message || 'Failed to add branch. Please try again.');
+            console.error('Error updating branch:', err.response?.data || err);
+            setError(err.response?.data?.message || 'Failed to update branch. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -50,7 +57,7 @@ const CreateBranchForm = ({ onBranchCreated, onCancel }) => {
 
     return (
         <div className="form-container">
-            <h2 className="form-title">Add New Branch</h2>
+            <h2 className="form-title">Update Branch</h2>
             <form onSubmit={handleSubmit} className="form-content">
                 {success && <p className="success-message">{success}</p>}
                 {error && <p className="error-message">{error}</p>}
@@ -98,7 +105,7 @@ const CreateBranchForm = ({ onBranchCreated, onCancel }) => {
 
                 <div className="form-actions">
                     <button type="submit" className="btn btn-primary" disabled={loading}>
-                        {loading ? 'Adding...' : <><FaPlus className="mr-2" /> Add Branch</>}
+                        {loading ? 'Updating...' : <><FaSave className="mr-2" /> Update</>}
                     </button>
                     <button
                         type="button"
@@ -114,4 +121,4 @@ const CreateBranchForm = ({ onBranchCreated, onCancel }) => {
     );
 };
 
-export default CreateBranchForm;
+export default UpdateBranchForm;

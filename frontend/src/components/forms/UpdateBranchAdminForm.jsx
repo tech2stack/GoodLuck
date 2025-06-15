@@ -1,16 +1,24 @@
-// frontend/src/components/forms/CreateBranchAdminForm.js
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { FaPlus, FaTimes } from 'react-icons/fa';
+import { FaSave, FaTimes } from 'react-icons/fa';
 
-const CreateBranchAdminForm = ({ onBranchAdminCreated, onCancel, branches }) => {
+const UpdateBranchAdminForm = ({ adminData, onBranchAdminUpdated, onCancel, branches }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [branchId, setBranchId] = useState('');
+    const [status, setStatus] = useState('active'); // Added status state
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+
+    useEffect(() => {
+        if (adminData) {
+            setName(adminData.name || '');
+            setEmail(adminData.email || '');
+            setBranchId(adminData.branchId?._id || adminData.branchId || ''); // Handle nested branch object
+            setStatus(adminData.status || 'active'); // Initialize status
+        }
+    }, [adminData]);
 
     // Effect to clear success/error messages after a delay
     useEffect(() => {
@@ -31,23 +39,20 @@ const CreateBranchAdminForm = ({ onBranchAdminCreated, onCancel, branches }) => 
         setSuccess(null);
 
         try {
-            // --- CHANGE MADE HERE: Removed '/register' from the URL ---
-            const response = await api.post('/branch-admins', { name, email, password, branchId });
-            // --- END CHANGE ---
-            
-            setSuccess('Branch Admin added successfully!');
-            console.log('New Branch Admin created:', response.data);
-            setName('');
-            setEmail('');
-            setPassword('');
-            setBranchId('');
+            const updatePayload = { name, email, branchId, status }; // Include status in payload
 
-            if (onBranchAdminCreated) {
-                onBranchAdminCreated(response.data.data);
+            // --- THE ONLY CHANGE HERE: Changed api.put to api.patch ---
+            const response = await api.patch(`/branch-admins/${adminData._id}`, updatePayload);
+            // --- END CHANGE ---
+
+            setSuccess('Branch Admin updated successfully!');
+            console.log('Branch Admin updated:', response.data);
+            if (onBranchAdminUpdated) {
+                onBranchAdminUpdated(response.data.data.admin); // Pass the 'admin' object from data
             }
         } catch (err) {
-            console.error('Error creating branch admin:', err.response?.data || err);
-            setError(err.response?.data?.message || 'Failed to add Branch Admin. Make sure email is unique and branch is selected.');
+            console.error('Error updating branch admin:', err.response?.data || err);
+            setError(err.response?.data?.message || 'Failed to update Branch Admin. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -55,7 +60,7 @@ const CreateBranchAdminForm = ({ onBranchAdminCreated, onCancel, branches }) => 
 
     return (
         <div className="form-container">
-            <h2 className="form-title">Add New Branch Admin</h2>
+            <h2 className="form-title">Update Branch Admin</h2>
             <form onSubmit={handleSubmit} className="form-content">
                 {success && <p className="success-message">{success}</p>}
                 {error && <p className="error-message">{error}</p>}
@@ -87,19 +92,6 @@ const CreateBranchAdminForm = ({ onBranchAdminCreated, onCancel, branches }) => 
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="adminPassword" className="form-label">Password:</label>
-                    <input
-                        type="password"
-                        id="adminPassword"
-                        className="form-input"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        aria-label="Branch Admin Password"
-                    />
-                </div>
-
-                <div className="form-group">
                     <label htmlFor="adminBranch" className="form-label">Assign Branch:</label>
                     <select
                         id="adminBranch"
@@ -116,9 +108,24 @@ const CreateBranchAdminForm = ({ onBranchAdminCreated, onCancel, branches }) => 
                     </select>
                 </div>
 
+                <div className="form-group">
+                    <label htmlFor="adminStatus" className="form-label">Status:</label>
+                    <select
+                        id="adminStatus"
+                        className="form-select"
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value)}
+                        required
+                        aria-label="Branch Admin Status"
+                    >
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+
                 <div className="form-actions">
                     <button type="submit" className="btn btn-primary" disabled={loading}>
-                        {loading ? 'Adding...' : <><FaPlus className="mr-2" /> Add Admin</>}
+                        {loading ? 'Updating...' : <><FaSave className="mr-2" /> Update Admin</>}
                     </button>
                     <button
                         type="button"
@@ -134,4 +141,4 @@ const CreateBranchAdminForm = ({ onBranchAdminCreated, onCancel, branches }) => 
     );
 };
 
-export default CreateBranchAdminForm;
+export default UpdateBranchAdminForm;

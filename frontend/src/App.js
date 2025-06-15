@@ -1,53 +1,73 @@
-// src/App.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// AuthProvider को import करें - यह आपके `src/context/AuthContext.js` से आएगा
-import { AuthProvider } from './context/AuthContext'; 
-
-// आपके मौजूदा components को import करें (paths को adjust करें अगर ज़रूरत हो)
+import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
-<<<<<<< HEAD
-import ScrollToTop from './components/ScrollTop'; 
-import ScrollTopButton from "./components/ScrollTopButton"; 
-import Preloader from './components/Preloader';
-import ErrorBoundary from './components/ErrorBoundary';
-
-// आपके मौजूदा pages को import करें (paths को adjust करें अगर ज़रूरत हो)
-=======
 import ScrollToTop from './components/ScrollTop';
 import ScrollTopButton from "./components/ScrollTopButton";
->>>>>>> 0da8c27371fa64eb100050cdc100977da837554d
+import Preloader from './components/Preloader';
+import ErrorBoundary from './components/ErrorBoundary';
+import FlashMessage from './components/common/FlashMessage'; // Make sure this path is correct
+
 import Login from './pages/Login';
 import Forgot from './pages/Forgot';
 import Home from './pages/Home';
 import About from './pages/About';
-import Career from './pages/Career'; // ✅ Correct
+import Career from './pages/Career';
 import Contact from './pages/Contact';
 
-// Dashboard Components को उनके संबंधित files से import karein
-// Ensure ki aapne SuperAdminDashboard.js, BranchAdminDashboard.js, EmployeeDashboard.js files banayi hain
-// aur unmein unka code hai.
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
-// Import BranchAdminDashboard from './pages/BranchAdminDashboard'; // Ise banayein
-// Import EmployeeDashboard from './pages/EmployeeDashboard';     // Ise banayein
+import BranchAdminDashboard from './pages/BranchAdminDashboard';
+import EmployeeDashboard from './pages/EmployeeDashboard';
 
-// Note: Humne ab yahan dashboard components ko inline declare karna hata diya hai,
-// kyunki unhein unki apni files se import kiya ja raha hai.
-// const SuperAdminDashboard = () => <div className="p-4"><h2>Super Admin Dashboard Content</h2><p>यह सुपर एडमिन के लिए आपका डैशबोर्ड है।</p></div>;
-// const BranchAdminDashboard = () => <div className="p-4"><h2>Branch Admin Dashboard Content</h2><p>यह ब्रांच एडमिन के लिए आपका डैशबोर्ड है।</p></div>;
-// const EmployeeDashboard = () => <div className="p-4"><h2>Employee Dashboard Content</h2><p>यह सामान्य कर्मचारी के लिए आपका डैशबोर्ड है।</p></div>;
+import OverallReportsComponent from './components/reports/OverallReportsComponent';
+import BranchOverviewReport from './components/reports/BranchOverviewReport';
+import BranchDetailsReport from './components/reports/BranchDetailsReport';
+import ReportsHub from './pages/ReportsHub';
 
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
+  const [flashMessage, setFlashMessage] = useState(null);
+  const [flashMessageType, setFlashMessageType] = useState('');
+  const [flashMessageAnimationClass, setFlashMessageAnimationClass] = useState('');
+
+  const showFlashMessage = useCallback((message, type = 'info') => {
+      clearTimeout(window.flashMessageTimeout);
+      clearTimeout(window.flashMessageHideTimeout);
+
+      setFlashMessage(message);
+      setFlashMessageType(type);
+      setFlashMessageAnimationClass('show');
+
+      window.flashMessageTimeout = setTimeout(() => {
+          setFlashMessageAnimationClass('hide');
+          window.flashMessageHideTimeout = setTimeout(() => {
+              setFlashMessage(null);
+              setFlashMessageType('');
+              setFlashMessageAnimationClass('');
+          }, 500);
+      }, 2000);
+  }, []);
+
+  const clearFlashMessage = useCallback(() => {
+      clearTimeout(window.flashMessageTimeout);
+      clearTimeout(window.flashMessageHideTimeout);
+      setFlashMessageAnimationClass('hide');
+      setTimeout(() => {
+          setFlashMessage(null);
+          setFlashMessageType('');
+          setFlashMessageAnimationClass('');
+      }, 500);
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500); // 1.5 seconds preloader
+    }, 1500);
 
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
@@ -62,7 +82,6 @@ function App() {
     };
   }, []);
 
-  // Preloader और ऑफलाइन चेक
   if (isLoading || !isOnline) {
     return <Preloader />;
   }
@@ -70,47 +89,39 @@ function App() {
   return (
     <ErrorBoundary>
       <Router>
-<<<<<<< HEAD
-        {/* AuthProvider पूरे Router को wrap करेगा ताकि लॉगिन स्थिति पूरे ऐप में उपलब्ध हो */}
-        <AuthProvider> 
-          <ScrollToTop /> {/* Router के अंदर ScrollToTop */}
-          <Header /> {/* Header component */}
-          <div className="main-content"> {/* Main content area */}
+        <AuthProvider>
+          <ScrollToTop />
+          <Header />
+          <FlashMessage
+            message={flashMessage}
+            type={flashMessageType}
+            onClose={clearFlashMessage}
+            className={flashMessageAnimationClass}
+          />
+          <div className="main-content">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
+              <Route path="/career" element={<Career />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forgot" element={<Forgot />} />
-              
-              {/* Dashboard Routes */}
-              <Route path="/superadmin-dashboard" element={<SuperAdminDashboard />} />
-              {/* Apni BranchAdminDashboard aur EmployeeDashboard ko bhi yahan import karein aur routes banayein */}
-              {/* <Route path="/branch-admin-dashboard" element={<BranchAdminDashboard />} /> */}
-              {/* <Route path="/employee-dashboard" element={<EmployeeDashboard />} /> */}
 
-              {/* आप यहां अन्य Routes जोड़ सकते हैं */}
-              {/* <Route path="/shop" element={<Shop />} /> */}
+              <Route path="/superadmin-dashboard" element={<SuperAdminDashboard />} />
+              <Route path="/branch-admin-dashboard" element={<BranchAdminDashboard />} />
+              <Route path="/dashboard" element={<EmployeeDashboard />} />
+
+              {/* Reports Routes - Passing showFlashMessage to ensure it's available */}
+              <Route path="/reports-hub" element={<ReportsHub showFlashMessage={showFlashMessage} />} />
+              <Route path="/reports/overall" element={<OverallReportsComponent showFlashMessage={showFlashMessage} />} />
+              <Route path="/reports/branch-overview" element={<BranchOverviewReport showFlashMessage={showFlashMessage} />} />
+              <Route path="/reports/branch-details/:id" element={<BranchDetailsReport showFlashMessage={showFlashMessage} />} />
+
             </Routes>
           </div>
-          <ScrollTopButton /> {/* ScrollTopButton */}
-          <Footer /> {/* Footer component */}
+          <ScrollTopButton />
+          <Footer />
         </AuthProvider>
-=======
-        <ScrollToTop />
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/career" element={<Career />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot" element={<Forgot />} />
-        </Routes>
-
-        <ScrollTopButton />
-        <Footer />
->>>>>>> 0da8c27371fa64eb100050cdc100977da837554d
       </Router>
     </ErrorBoundary>
   );

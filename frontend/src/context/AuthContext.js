@@ -1,5 +1,4 @@
-// src/context/AuthContext.js
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react'; // Added useCallback
 import api from '../services/api'; // Axios instance to make API calls
 
 const AuthContext = createContext(null); // Initialize with null or a default object
@@ -46,21 +45,19 @@ export const AuthProvider = ({ children }) => {
         }
     }, []); // Empty dependency array means this runs only once on mount
 
-    // Function to handle user login
-    const login = async (loginId, password, role) => {
-        // No need to setLoading(true) here as it's typically done once per overall auth init
-        // If you want a loading state for the login *form*, manage it within the form component.
+    // Function to handle user login, wrapped in useCallback
+    const login = useCallback(async (loginId, password) => { // Removed 'role' from parameters
         try {
-            console.log('AuthContext: Attempting login for LoginID:', loginId, 'Role:', role);
-            const payload = { loginId, password, role };
+            console.log('AuthContext: Attempting login for LoginID:', loginId);
+            // FIX: Changed 'loginId' key to 'identifier' to match backend expectation
+            const payload = { identifier: loginId, password };
             console.log('AuthContext: Login payload being sent:', payload);
 
             const response = await api.post('/auth/login', payload);
             console.log('AuthContext: Login API response (response.data):', response.data);
 
-            // FIX: Destructure directly from response.data, not response.data.data
-            // Based on your console log: {success: true, user: {…}, token: '...'}
-            const { token, user } = response.data; // Corrected destructuring
+            // Destructure directly from response.data as per your console log
+            const { token, data: { user } } = response.data; // Backend sends token and user under 'data' object
 
             if (!user || !user._id || !user.role) { // More robust user object validation
                 console.error('AuthContext: API response has invalid or incomplete user object! Login failed.');
@@ -79,8 +76,8 @@ export const AuthProvider = ({ children }) => {
             }
 
             // Store token and user data in localStorage
-            localStorage.setItem('jwtToken', token);
-            localStorage.setItem('user_data', JSON.stringify(user));
+            localStorage.setItem('jwtToken', token); // Use 'jwtToken' as per your code
+            localStorage.setItem('user_data', JSON.stringify(user)); // Use 'user_data' as per your code
 
             setUserData(user);
             setIsLoggedIn(true);
@@ -94,17 +91,25 @@ export const AuthProvider = ({ children }) => {
             // Rethrow the error so the calling component (Login.jsx) can handle it
             throw error;
         }
-    };
+    }, []); // Dependencies for useCallback: empty if api is stable, or [api] if it changes
 
     // Function to handle user logout
-    const logout = () => {
+    const logout = useCallback(async () => { // Added useCallback and async/await
         console.log('AuthContext: User is logging out.');
-        localStorage.clear(); // Clear all authentication related data
-        setIsLoggedIn(false);
-        setUserData(null);
-        // You might also want to call a backend logout endpoint to clear server-side cookies
-        // e.g., api.post('/auth/logout');
-    };
+        try {
+            await api.post('/auth/logout'); // Call backend logout endpoint to clear server-side cookies
+            localStorage.clear(); // Clear all authentication related data from frontend
+            setIsLoggedIn(false);
+            setUserData(null);
+            console.log('AuthContext: Logout successful.');
+        } catch (error) {
+            console.error('AuthContext: Error during logout:', error.response?.data?.message || error.message);
+            // Even if backend logout fails, clear frontend state for user experience
+            localStorage.clear();
+            setIsLoggedIn(false);
+            setUserData(null);
+        }
+    }, []); // Dependencies for useCallback: [api]
 
     // Provide the auth state and functions to children components
     const authContextValue = {
@@ -126,5 +131,9 @@ export const AuthProvider = ({ children }) => {
 // Custom hook to easily consume the AuthContext
 export const useAuth = () => {
     // Ensure useContext is called within a component rendered inside AuthProvider
-    return useContext(AuthContext);
+    const context = useContext(AuthContext);
+    if (context === null) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 };
