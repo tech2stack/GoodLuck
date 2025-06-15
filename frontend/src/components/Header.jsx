@@ -111,11 +111,11 @@ const Header = () => {
                         <FaUserAlt style={{ marginRight: '0.5rem' }} />
                         About
                     </Link>
-                    {/* Added Career link back */}
+                    {/* Added Career link back
                     <Link to="/career" onClick={closeMenu}>
                         <MdWork style={{ marginRight: '0.5rem' }} />
                         Career
-                    </Link>
+                    </Link> */}
                     <Link to="/contact" onClick={closeMenu}>
                         <MdContactMail style={{ marginRight: '0.5rem' }} />
                         Contact

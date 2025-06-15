@@ -23,8 +23,8 @@ import EmployeeDashboard from './pages/EmployeeDashboard';
 
 import OverallReportsComponent from './components/reports/OverallReportsComponent';
 import BranchOverviewReport from './components/reports/BranchOverviewReport';
-import BranchDetailsReport from './components/reports/BranchDetailsReport';
-import ReportsHub from './pages/ReportsHub';
+// import BranchDetailsReport from './components/reports/BranchDetailsReport';
+// import ReportsHub from './pages/ReportsHub';
 
 
 function App() {
@@ -112,10 +112,10 @@ function App() {
               <Route path="/dashboard" element={<EmployeeDashboard />} />
 
               {/* Reports Routes - Passing showFlashMessage to ensure it's available */}
-              <Route path="/reports-hub" element={<ReportsHub showFlashMessage={showFlashMessage} />} />
+              {/* <Route path="/reports-hub" element={<ReportsHub showFlashMessage={showFlashMessage} />} /> */}
               <Route path="/reports/overall" element={<OverallReportsComponent showFlashMessage={showFlashMessage} />} />
               <Route path="/reports/branch-overview" element={<BranchOverviewReport showFlashMessage={showFlashMessage} />} />
-              <Route path="/reports/branch-details/:id" element={<BranchDetailsReport showFlashMessage={showFlashMessage} />} />
+              {/* <Route path="/reports/branch-details/:id" element={<BranchDetailsReport showFlashMessage={showFlashMessage} />} /> */}
 
             </Routes>
           </div>

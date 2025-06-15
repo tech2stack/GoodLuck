@@ -1,6 +1,11 @@
+// src/components/reports/OverallReportsComponent.jsx
+
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
-import { FaDownload, FaEye } from 'react-icons/fa';
+import { FaDownload, FaEye, FaSpinner, FaSyncAlt } from 'react-icons/fa';
+// REMOVE: import '../../styles/Report.css'; // This is a generic one, use specific now
+// NEW: Import the new component-specific CSS
+import '../../styles/OverallReportsComponent.css';
 
 const OverallReportsComponent = ({ showFlashMessage }) => {
     const [reportData, setReportData] = useState(null);
@@ -12,18 +17,23 @@ const OverallReportsComponent = ({ showFlashMessage }) => {
         setError(null);
         try {
             const response = await api.get('/reports/overall');
-            // Console log to debug API response structure
-            console.log("Overall Report API Response:", response.data); 
-            
-            // Adjust 'response.data.data' if your API structure is different (e.g., response.data)
-            setReportData(response.data.data); 
-            
-            if (typeof showFlashMessage === 'function') {
-                showFlashMessage('Overall report loaded successfully!', 'success');
+            console.log("Overall Report API Response:", response.data);
+            const dataToSet = response.data.data || response.data; // Handles nested 'data' or direct response
+
+            if (dataToSet && typeof dataToSet === 'object') {
+                setReportData(dataToSet);
+                if (typeof showFlashMessage === 'function') {
+                    showFlashMessage('Overall report loaded successfully!', 'success');
+                }
+            } else {
+                setReportData({});
+                if (typeof showFlashMessage === 'function') {
+                    showFlashMessage('Overall report: Unexpected data format or empty response.', 'warning');
+                }
             }
         } catch (err) {
             console.error('Error fetching overall report:', err.response?.data?.message || err.message || err);
-            setError(err.response?.data?.message || 'Failed to fetch overall report.');
+            setError(err.response?.data?.message || 'Failed to fetch overall report. Check server & network.');
             if (typeof showFlashMessage === 'function') {
                 showFlashMessage(err.response?.data?.message || 'Failed to fetch overall report.', 'error');
             }
@@ -33,11 +43,11 @@ const OverallReportsComponent = ({ showFlashMessage }) => {
     }, [showFlashMessage]);
 
     const downloadOverallReport = useCallback(async () => {
+        setLoading(true);
         try {
             const response = await api.get('/reports/overall/download', {
                 responseType: 'blob',
             });
-
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
@@ -46,6 +56,7 @@ const OverallReportsComponent = ({ showFlashMessage }) => {
             link.click();
             link.remove();
             window.URL.revokeObjectURL(url);
+
             if (typeof showFlashMessage === 'function') {
                 showFlashMessage('Overall report download started!', 'success');
             }
@@ -68,52 +79,82 @@ const OverallReportsComponent = ({ showFlashMessage }) => {
                     showFlashMessage(err.response?.data?.message || 'Failed to download overall report.', 'error');
                 }
             }
+        } finally {
+            setLoading(false);
         }
     }, [showFlashMessage]);
 
     useEffect(() => {
-        // Ensure showFlashMessage is a function before calling fetchOverallReport
         if (typeof showFlashMessage === 'function') {
             fetchOverallReport();
         } else {
-             console.warn("OverallReportsComponent: showFlashMessage prop is not a function.");
+            console.warn("OverallReportsComponent: showFlashMessage prop is not available on initial render.");
         }
     }, [fetchOverallReport, showFlashMessage]);
 
     if (loading) {
-        return <p className="text-center my-4">Loading overall report...</p>;
+        return (
+            <div className="overall-report-loading">
+                <FaSpinner className="fa-spin" /> Loading overall business summary...
+            </div>
+        );
     }
 
     if (error) {
-        return <p className="text-center my-4 text-danger">Error: {error}</p>;
+        return (
+            <div className="overall-report-error">
+                <p className="mb-3">Error: {error}</p>
+                <button onClick={fetchOverallReport} className="btn btn-sm btn-outline-danger">
+                    <FaSyncAlt className="me-1" /> Try Again
+                </button>
+            </div>
+        );
     }
 
-    return (
-        <div className="report-content p-3 border rounded">
-            <h3 className="mb-3">Overall Business Summary</h3>
-            <p className="report-description text-muted mb-4">This report provides a high-level overview of all branches, admins, and employees.</p>
+    const displayData = reportData || {};
 
-            <div className="report-actions mb-4">
-                <button onClick={fetchOverallReport} className="btn btn-info report-action-btn me-2">
+    return (
+        <div className="overall-report-container">
+            <h4 className="overall-report-title">Overall Business Summary</h4>
+            <p className="reports-description-text">This report provides a high-level overview of all branches, admins, and employees across the entire business.</p>
+
+            <div className="overall-report-actions">
+                <button onClick={fetchOverallReport} className="btn btn-info">
                     <FaEye className="me-2" /> View Latest Data
                 </button>
-                <button onClick={downloadOverallReport} className="btn btn-success report-action-btn">
+                <button onClick={downloadOverallReport} className="btn btn-success">
                     <FaDownload className="me-2" /> Download PDF
                 </button>
             </div>
 
-            {reportData ? (
-                <div className="report-data-display">
-                    {/* Defensive checks for each property */}
-                    <p>Total Branches: <strong>{reportData.totalBranches !== undefined ? reportData.totalBranches : 'N/A'}</strong></p>
-                    <p>Total Branch Admins: <strong>{reportData.totalBranchAdmins !== undefined ? reportData.totalBranchAdmins : 'N/A'}</strong></p>
-                    <p>Total Employees: <strong>{reportData.totalEmployees !== undefined ? reportData.totalEmployees : 'N/A'}</strong></p>
-                    <p>Active Branches: <strong>{reportData.activeBranches !== undefined ? reportData.activeBranches : 'N/A'}</strong></p>
-                    <p>Inactive Branches: <strong>{reportData.inactiveBranches !== undefined ? reportData.inactiveBranches : 'N/A'}</strong></p>
-                  
+            {Object.keys(displayData).length > 0 ? (
+                <div className="overall-summary-grid">
+                    <div className="overall-summary-card">
+                        <h5>Total Branches</h5>
+                        <p className="display-count text-primary">{displayData.totalBranches ?? 'N/A'}</p>
+                    </div>
+                    <div className="overall-summary-card">
+                        <h5>Active Branches</h5>
+                        <p className="display-count text-success">{displayData.activeBranches ?? 'N/A'}</p>
+                    </div>
+                    <div className="overall-summary-card">
+                        <h5>Inactive Branches</h5>
+                        <p className="display-count text-warning">{displayData.inactiveBranches ?? 'N/A'}</p>
+                    </div>
+                    <div className="overall-summary-card">
+                        <h5>Total Branch Admins</h5>
+                        <p className="display-count text-info">{displayData.totalBranchAdmins ?? 'N/A'}</p>
+                    </div>
+                    <div className="overall-summary-card">
+                        <h5>Total Employees</h5>
+                        <p className="display-count text-secondary">{displayData.totalEmployees ?? 'N/A'}</p>
+                    </div>
+                    {/* If you add more metrics in the future, just add another card here */}
                 </div>
             ) : (
-                <p className="text-center text-muted">No overall report data available. Click "View Latest Data" to load.</p>
+                <div className="overall-report-no-data">
+                    <p className="mb-0">No overall report data available. Ensure backend is providing data or check filters.</p>
+                </div>
             )}
         </div>
     );

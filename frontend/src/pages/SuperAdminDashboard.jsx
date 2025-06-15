@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 // Icons for buttons and tables
-import { FaPlus, FaEdit, FaTrash, FaChevronDown, FaBuilding, FaUsers, FaUserTie, FaEye, FaHome, FaTimes, FaCheckCircle, FaExclamationCircle, FaChartBar } from 'react-icons/fa'; // Added FaChartBar for the new Reports button
-import { useNavigate } from 'react-router-dom';
+import { FaPlus, FaEdit, FaTrash, FaChevronDown, FaBuilding, FaUsers, FaUserTie, FaEye, FaHome, FaTimes, FaCheckCircle, FaExclamationCircle, FaChartBar, FaSearchLocation } from 'react-icons/fa'; // Added FaSearchLocation for specific branch report
 
 // Import all form components
 import CreateBranchForm from '../components/forms/CreateBranchForm';
@@ -12,12 +11,17 @@ import CreateBranchAdminForm from '../components/forms/CreateBranchAdminForm';
 import UpdateBranchAdminForm from '../components/forms/UpdateBranchAdminForm';
 import CreateEmployeeForm from '../components/forms/CreateEmployeeForm';
 import UpdateEmployeeForm from '../components/forms/UpdateEmployeeForm';
-// Removed: OverallReportsComponent, BranchDetailsReport, BranchSelector as they are now handled by ReportsHub
+
+// Import report components
+import OverallReportsComponent from '../components/reports/OverallReportsComponent';
+import BranchOverviewReport from '../components/reports/BranchOverviewReport';
+import BranchSelector from '../components/reports/BranchSelector';
+import BranchDetailsReport from '../components/reports/BranchDetailsReport';
 
 // Import CSS file (provides general styles for forms and tables, and now the new flash/confirm styles)
-import '../styles/SuperAdminDashboard.css';
+import '../styles/SuperAdminDashboard.css'; // Ensure this CSS file has styles for relative-dropdown and dropdown-menu
 
-// Reusable Flash Message Component
+// Reusable Flash Message Component (no change)
 const FlashMessage = ({ message, type, onClose, className }) => {
     if (!message) return null;
 
@@ -37,7 +41,7 @@ const FlashMessage = ({ message, type, onClose, className }) => {
     );
 };
 
-// Reusable Confirmation Dialog Component
+// Reusable Confirmation Dialog Component (no change)
 const ConfirmDialog = ({ show, message, onConfirm, onCancel }) => {
     if (!show) return null;
 
@@ -58,10 +62,9 @@ const ConfirmDialog = ({ show, message, onConfirm, onCancel }) => {
     );
 };
 
-
 const SuperAdminDashboard = () => {
     const { userData, loading: authLoading, isLoggedIn } = useAuth();
-    const navigate = useNavigate();
+    // const navigate = useNavigate(); // Removed as we are not navigating to a new route for reports
 
     // State for storing fetched data
     const [branches, setBranches] = useState([]);
@@ -73,60 +76,61 @@ const SuperAdminDashboard = () => {
     // Flash Message State
     const [flashMessage, setFlashMessage] = useState(null);
     const [flashMessageType, setFlashMessageType] = useState(''); // 'success' or 'error'
-    const [flashMessageAnimationClass, setFlashMessageAnimationClass] = useState(''); // New state for animation
+    const [flashMessageAnimationClass, setFlashMessageAnimationClass] = useState('');
 
     // Confirmation Dialog State
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState(null); // Stores the ID of the item to delete
-    const [onConfirmAction, setOnConfirmAction] = useState(null); // Stores the function to call on confirmation
+    const [itemToDelete, setItemToDelete] = useState(null);
+    const [onConfirmAction, setOnConfirmAction] = useState(null);
 
-    // States for controlling dropdown visibility
+    // States for controlling dropdown visibility for Branches, Admins, Employees
     const [showBranchesDropdown, setShowBranchesDropdown] = useState(false);
     const [showAdminsDropdown, setShowAdminsDropdown] = useState(false);
     const [showEmployeesDropdown, setShowEmployeesDropdown] = useState(false);
-    // Removed: [showReportsDropdown, setShowReportsDropdown] = useState(false);
+
+    // NEW: State for controlling Reports dropdown visibility
+    const [showReportsDropdown, setShowReportsDropdown] = useState(false);
 
     // Refs for handling clicks outside dropdowns (to close them)
     const branchesDropdownRef = useRef(null);
     const adminsDropdownRef = useRef(null);
     const employeesDropdownRef = useRef(null);
-    // Removed: reportsDropdownRef = useRef(null);
-
+    const reportsDropdownRef = useRef(null); // NEW: Ref for reports dropdown
 
     // State to control which section is displayed in the main content area
+    // 'summary', 'createBranch', 'updateBranch', 'branches', 'createBranchAdmin', 'updateBranchAdmin', 'branchAdmins', 'createEmployee', 'updateEmployee', 'employees', 'reports' (new, for reports display)
     const [activeView, setActiveView] = useState('summary');
+
+    // NEW: State to control which report is active within the 'reports' view
+    // 'overall', 'branch-overview', 'branch-details-selector', 'branch-details'
+    const [activeReportView, setActiveReportView] = useState('overall');
+    const [selectedBranchId, setSelectedBranchId] = useState(null); // State to hold selected branch ID for details report
 
     // States for managing data during update operations
     const [editingBranchData, setEditingBranchData] = useState(null);
     const [editingBranchAdminData, setEditingBranchAdminData] = useState(null);
     const [editingEmployeeData, setEditingEmployeeData] = useState(null);
 
-    // Removed: activeReportView, selectedBranchId as they are now handled by ReportsHub
-
-    // Function to show flash messages with animation and auto-hide
+    // Function to show flash messages (no change)
     const showFlashMessage = useCallback((message, type) => {
-        // Clear any existing timeouts to prevent conflicts
         clearTimeout(window.flashMessageTimeout);
         clearTimeout(window.flashMessageHideTimeout);
 
         setFlashMessage(message);
         setFlashMessageType(type);
-        setFlashMessageAnimationClass('show'); // Start show animation
+        setFlashMessageAnimationClass('show');
 
-        // Set timeout to start hide animation after 2 seconds
         window.flashMessageTimeout = setTimeout(() => {
-            setFlashMessageAnimationClass('hide'); // Start hide animation
-
-            // After hide animation completes, actually clear the message
+            setFlashMessageAnimationClass('hide');
             window.flashMessageHideTimeout = setTimeout(() => {
                 setFlashMessage(null);
                 setFlashMessageType('');
-                setFlashMessageAnimationClass(''); // Reset animation class
-            }, 500); // This duration should match your CSS transition duration (0.5s)
-        }, 2000); // Message visible for 2 seconds
+                setFlashMessageAnimationClass('');
+            }, 500);
+        }, 2000);
     }, []);
 
-    // Function to fetch all dashboard data
+    // Function to fetch all dashboard data (no change)
     const fetchData = useCallback(async () => {
         try {
             setLoadingData(true);
@@ -151,7 +155,7 @@ const SuperAdminDashboard = () => {
         }
     }, [showFlashMessage]);
 
-    // useEffect for initial data fetch and auth check
+    // useEffect for initial data fetch and auth check (updated to remove navigate)
     useEffect(() => {
         if (authLoading) {
             setLoadingData(true);
@@ -162,14 +166,14 @@ const SuperAdminDashboard = () => {
             setError('You do not have permission to access this dashboard. Please log in as a Super Admin.');
             setLoadingData(false);
             showFlashMessage('Access Denied: Please log in as a Super Admin.', 'error');
-            navigate('/login');
+            // Consider redirecting here if not logged in/authorized, e.g., window.location.href = '/login';
             return;
         }
 
         fetchData();
-    }, [userData, authLoading, isLoggedIn, navigate, fetchData, showFlashMessage]);
+    }, [userData, authLoading, isLoggedIn, fetchData, showFlashMessage]); // Removed navigate from dependency array
 
-    // useEffect to handle clicks outside dropdowns to close them
+    // useEffect to handle clicks outside dropdowns to close them (updated with reports dropdown)
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (branchesDropdownRef.current && !branchesDropdownRef.current.contains(event.target)) {
@@ -181,7 +185,10 @@ const SuperAdminDashboard = () => {
             if (employeesDropdownRef.current && !employeesDropdownRef.current.contains(event.target)) {
                 setShowEmployeesDropdown(false);
             }
-            // Removed: if (reportsDropdownRef.current && !reportsDropdownRef.current.contains(event.target)) { setShowReportsDropdown(false); }
+            // NEW: Handle reports dropdown
+            if (reportsDropdownRef.current && !reportsDropdownRef.current.contains(event.target)) {
+                setShowReportsDropdown(false);
+            }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
@@ -190,27 +197,35 @@ const SuperAdminDashboard = () => {
         };
     }, []);
 
-    // Dropdown togglers
+    // Dropdown togglers (updated with reports toggler)
     const toggleBranchesDropdown = () => setShowBranchesDropdown(prev => !prev);
     const toggleAdminsDropdown = () => setShowAdminsDropdown(prev => !prev);
     const toggleEmployeesDropdown = () => setShowEmployeesDropdown(prev => !prev);
-    // Removed: const toggleReportsDropdown = () => setShowReportsDropdown(prev => !prev);
+    const toggleReportsDropdown = () => setShowReportsDropdown(prev => !prev); // NEW: Reports toggler
 
-
-    // --- Branch Handlers ---
-    const handleCreateBranchClick = () => {
+    // Function to close all dropdowns
+    const closeAllDropdowns = () => {
         setShowBranchesDropdown(false);
+        setShowAdminsDropdown(false);
+        setShowEmployeesDropdown(false);
+        setShowReportsDropdown(false); // NEW: Close reports dropdown
+    };
+
+
+    // --- Branch Handlers (no change) ---
+    const handleCreateBranchClick = () => {
+        closeAllDropdowns();
         setActiveView('createBranch');
     };
 
     const handleViewBranches = () => {
-        setShowBranchesDropdown(false);
+        closeAllDropdowns();
         setActiveView('branches');
         fetchData();
     };
 
     const handleUpdateBranch = (branch) => {
-        setShowBranchesDropdown(false);
+        closeAllDropdowns();
         setEditingBranchData(branch);
         setActiveView('updateBranch');
     };
@@ -226,22 +241,20 @@ const SuperAdminDashboard = () => {
                 console.error("Error deleting branch:", err.response || err);
                 showFlashMessage(`Failed to delete branch: ${err.response?.data?.message || err.message}`, 'error');
             } finally {
-                setShowConfirmDialog(false); // Close dialog
-                setItemToDelete(null); // Clear item
-                setOnConfirmAction(null); // Clear action
+                setShowConfirmDialog(false);
+                setItemToDelete(null);
+                setOnConfirmAction(null);
             }
         });
         setShowConfirmDialog(true);
     };
 
-    // Callback function for CreateBranchForm after successful creation
     const onBranchCreated = (newBranch) => {
         showFlashMessage('New branch created successfully!', 'success');
         fetchData();
         setActiveView('branches');
     };
 
-    // Callback for UpdateBranchForm after successful update
     const onBranchUpdated = (updatedBranch) => {
         showFlashMessage('Branch updated successfully!', 'success');
         fetchData();
@@ -249,20 +262,20 @@ const SuperAdminDashboard = () => {
         setEditingBranchData(null);
     };
 
-    // --- Branch Admin Handlers ---
+    // --- Branch Admin Handlers (no change) ---
     const handleCreateBranchAdminClick = () => {
-        setShowAdminsDropdown(false);
+        closeAllDropdowns();
         setActiveView('createBranchAdmin');
     };
 
     const handleViewBranchAdmins = () => {
-        setShowAdminsDropdown(false);
+        closeAllDropdowns();
         setActiveView('branchAdmins');
         fetchData();
     };
 
     const handleUpdateBranchAdmin = (admin) => {
-        setShowAdminsDropdown(false);
+        closeAllDropdowns();
         setEditingBranchAdminData(admin);
         setActiveView('updateBranchAdmin');
     };
@@ -286,14 +299,12 @@ const SuperAdminDashboard = () => {
         setShowConfirmDialog(true);
     };
 
-    // Callback for CreateBranchAdminForm after successful creation
     const onBranchAdminCreated = (newAdmin) => {
         showFlashMessage('New branch admin created successfully!', 'success');
         fetchData();
         setActiveView('branchAdmins');
     };
 
-    // Callback for UpdateBranchAdminForm after successful update
     const onBranchAdminUpdated = (updatedAdmin) => {
         showFlashMessage('Branch Admin updated successfully!', 'success');
         fetchData();
@@ -301,20 +312,20 @@ const SuperAdminDashboard = () => {
         setEditingBranchAdminData(null);
     };
 
-    // --- Employee Handlers ---
+    // --- Employee Handlers (no change) ---
     const handleCreateEmployeeClick = () => {
-        setShowEmployeesDropdown(false);
+        closeAllDropdowns();
         setActiveView('createEmployee');
     };
 
     const handleViewEmployees = () => {
-        setShowEmployeesDropdown(false);
+        closeAllDropdowns();
         setActiveView('employees');
         fetchData();
     };
 
     const handleUpdateEmployee = (employee) => {
-        setShowEmployeesDropdown(false);
+        closeAllDropdowns();
         setEditingEmployeeData(employee);
         setActiveView('updateEmployee');
     };
@@ -338,14 +349,12 @@ const SuperAdminDashboard = () => {
         setShowConfirmDialog(true);
     };
 
-    // Callback for CreateEmployeeForm after successful creation
     const onEmployeeCreated = (newEmployee) => {
         showFlashMessage('New employee created successfully!', 'success');
         fetchData();
         setActiveView('employees');
     };
 
-    // Callback for UpdateEmployeeForm after successful update
     const onEmployeeUpdated = (updatedEmployee) => {
         showFlashMessage('Employee updated successfully!', 'success');
         fetchData();
@@ -353,33 +362,42 @@ const SuperAdminDashboard = () => {
         setEditingEmployeeData(null);
     };
 
-    // --- New Report Navigation Handler ---
-    const handleGoToReportsHub = () => {
-        // This will navigate to the new ReportsHub component
-        navigate('/reports-hub');
-        // Close any open dropdowns
-        setShowBranchesDropdown(false);
-        setShowAdminsDropdown(false);
-        setShowEmployeesDropdown(false);
+    // --- NEW: Report Specific Handlers ---
+    const handleReportSelection = (reportType) => {
+        closeAllDropdowns(); // Close the reports dropdown after selection
+        setActiveView('reports'); // Ensure we are in the reports section
+        setActiveReportView(reportType); // Set the specific report to display
+        setSelectedBranchId(null); // Reset selected branch for new report view
     };
+
+    // Function to handle branch selection from BranchSelector (for Branch Details Report)
+    const handleBranchSelectForDetails = (branchId) => {
+        setSelectedBranchId(branchId);
+        setActiveReportView('branch-details'); // Automatically switch to branch-details view
+    };
+
+    // Function to clear selected branch and go back to branch selection view (for Branch Details Report)
+    const clearSelectedBranchForDetails = () => {
+        setSelectedBranchId(null);
+        setActiveReportView('branch-details-selector'); // Go back to the selector
+    };
+
 
     // --- General Navigation ---
     const handleGoHome = () => {
         setActiveView('summary');
-        // Close all dropdowns
-        setShowBranchesDropdown(false);
-        setShowAdminsDropdown(false);
-        setShowEmployeesDropdown(false);
-        // Removed: setShowReportsDropdown(false);
+        closeAllDropdowns(); // Close all dropdowns
         // Clear all editing states
         setEditingBranchData(null);
         setEditingBranchAdminData(null);
         setEditingEmployeeData(null);
-        // Removed: activeReportView, selectedBranchId
+        // Reset report states
+        setActiveReportView('overall');
+        setSelectedBranchId(null);
         fetchData(); // Re-fetch data for summary
     };
 
-    // Handle confirmation dialog actions
+    // Handle confirmation dialog actions (no change)
     const handleConfirm = () => {
         if (onConfirmAction) {
             onConfirmAction();
@@ -392,7 +410,7 @@ const SuperAdminDashboard = () => {
         setOnConfirmAction(null);
     };
 
-    // Helper component for dropdown buttons (for cleaner JSX)
+    // Helper component for dropdown buttons (for cleaner JSX) (no change)
     const DropdownButton = ({ onClick, children, icon: IconComponent }) => (
         <button
             onClick={onClick}
@@ -403,14 +421,55 @@ const SuperAdminDashboard = () => {
         </button>
     );
 
-    // Render loading or error states
-    // Consolidated loading/error logic to prevent redundancy
+    // NEW: Function to render the active report component
+    const renderActiveReportComponent = () => {
+        switch (activeReportView) {
+            case 'overall':
+                return <OverallReportsComponent showFlashMessage={showFlashMessage} />;
+            case 'branch-overview':
+                return <BranchOverviewReport showFlashMessage={showFlashMessage} />;
+            case 'branch-details-selector':
+                return (
+                    <div className="report-selector-container">
+                        <BranchSelector
+                            showFlashMessage={showFlashMessage}
+                            onSelectBranch={handleBranchSelectForDetails}
+                        />
+                        <p className="mt-4 text-muted text-center reports-description">
+                            Select a branch from the dropdown above to view its detailed report.
+                        </p>
+                    </div>
+                );
+            case 'branch-details':
+                if (selectedBranchId) {
+                    return (
+                        <BranchDetailsReport
+                            id={selectedBranchId}
+                            showFlashMessage={showFlashMessage}
+                            onBackToSelector={clearSelectedBranchForDetails}
+                        />
+                    );
+                }
+                return (
+                    <p className="text-center text-muted mt-5">
+                        Please select a branch to view its details.
+                    </p>
+                );
+            default:
+                return (
+                    <div className="report-default-message">
+                        <p>Select a report type from the "Reports" dropdown.</p>
+                    </div>
+                );
+        }
+    };
+
+
+    // Render loading or error states (no change)
     if (authLoading || loadingData) {
         return (
             <div className="loading-screen">
                 <p>Dashboard is loading...</p>
-                {/* You can add a spinner here if you have one in your CSS */}
-                {/* <div className="loading-spinner"></div> */}
             </div>
         );
     }
@@ -433,16 +492,16 @@ const SuperAdminDashboard = () => {
                 message={flashMessage}
                 type={flashMessageType}
                 onClose={() => {
-                    clearTimeout(window.flashMessageTimeout); // Clear auto-hide
+                    clearTimeout(window.flashMessageTimeout);
                     clearTimeout(window.flashMessageHideTimeout);
-                    setFlashMessageAnimationClass('hide'); // Immediately start hide animation
+                    setFlashMessageAnimationClass('hide');
                     setTimeout(() => {
                         setFlashMessage(null);
                         setFlashMessageType('');
                         setFlashMessageAnimationClass('');
-                    }, 500); // Matches CSS transition
+                    }, 500);
                 }}
-                className={flashMessageAnimationClass} // Pass the animation class
+                className={flashMessageAnimationClass}
             />
 
             {/* Confirmation Dialog */}
@@ -529,14 +588,24 @@ const SuperAdminDashboard = () => {
                     )}
                 </div>
 
-                {/* --- NEW REPORTS BUTTON (Navigates to ReportsHub) --- */}
-                <button
-                    onClick={handleGoToReportsHub}
-                    className="action-button report-button"
-                >
-                    <FaChartBar className="icon" />
-                    <span>View Reports</span>
-                </button>
+                {/* NEW: Reports Button with Dropdown */}
+                <div className="relative-dropdown" ref={reportsDropdownRef}>
+                    <button
+                        onClick={toggleReportsDropdown}
+                        className="action-button report-button"
+                    >
+                        <FaChartBar className="icon" />
+                        <span>View Reports</span>
+                        <FaChevronDown className={`dropdown-arrow ${showReportsDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+                    {showReportsDropdown && (
+                        <div className="dropdown-menu">
+                            <DropdownButton onClick={() => handleReportSelection('overall')} icon={FaChartBar}>Overall Business Summary</DropdownButton>
+                            <DropdownButton onClick={() => handleReportSelection('branch-overview')} icon={FaBuilding}>All Branches Overview</DropdownButton>
+                            <DropdownButton onClick={() => handleReportSelection('branch-details-selector')} icon={FaSearchLocation}>Specific Branch Details</DropdownButton>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Dynamic Content Area based on activeView */}
@@ -563,7 +632,6 @@ const SuperAdminDashboard = () => {
                 </div>
             )}
 
-            {/* Branch Forms */}
             {activeView === 'createBranch' && (
                 <CreateBranchForm
                     onBranchCreated={onBranchCreated}
@@ -579,7 +647,6 @@ const SuperAdminDashboard = () => {
                 />
             )}
 
-            {/* Branch Admin Forms */}
             {activeView === 'createBranchAdmin' && (
                 <CreateBranchAdminForm
                     onBranchAdminCreated={onBranchAdminCreated}
@@ -597,7 +664,6 @@ const SuperAdminDashboard = () => {
                 />
             )}
 
-            {/* Employee Forms */}
             {activeView === 'createEmployee' && (
                 <CreateEmployeeForm
                     onEmployeeCreated={onEmployeeCreated}
@@ -615,7 +681,6 @@ const SuperAdminDashboard = () => {
                 />
             )}
 
-            {/* Tables for viewing data */}
             {activeView === 'branches' && (
                 <div className="table-section">
                     <div className="table-header">
@@ -701,7 +766,6 @@ const SuperAdminDashboard = () => {
                                             <td className="table-td">{admin.name}</td>
                                             <td className="table-td">{admin.email}</td>
                                             <td className="table-td">
-                                                {/* Ensure branchId is populated by your backend for name to show */}
                                                 {admin.branchId ? admin.branchId.name || 'N/A' : 'N/A'}
                                             </td>
                                             <td className="table-td action-buttons">
@@ -758,7 +822,6 @@ const SuperAdminDashboard = () => {
                                             <td className="table-td">{employee.email}</td>
                                             <td className="table-td">{employee.role}</td>
                                             <td className="table-td">
-                                                {/* Ensure branchId is populated by your backend for name to show */}
                                                 {employee.branchId ? employee.branchId.name || 'N/A' : 'N/A'}
                                             </td>
                                             <td className="table-td action-buttons">
@@ -786,19 +849,14 @@ const SuperAdminDashboard = () => {
                 </div>
             )}
 
-            {/* Removed all conditional rendering for reports here.
-                The ReportsHub component will now handle displaying reports. */}
-            {/* {activeView === 'reports' && activeReportView === 'overall' && (...) } */}
-            {/* {activeView === 'reports' && activeReportView === 'branchDetails' && selectedBranchId && (...) } */}
-            {/* {activeView === 'reports' && activeReportView === 'branchDetails' && !selectedBranchId && (...) } */}
-            {/* Removed the direct BranchSelector as it's part of ReportsHub now */}
-            {/* <div className="dashboard-section">
-                <h2>View Specific Branch Reports</h2>
-                <BranchSelector />
-                <p className="mt-2 text-muted">Select a branch to view its detailed report.</p>
-            </div> */}
+            {/* NEW: Conditional rendering for Reports components */}
+            {activeView === 'reports' && (
+                <div className="report-display-area card shadow-sm">
+                    <h2 className="reports-main-title">Business Intelligence Reports</h2>
+                    {renderActiveReportComponent()}
+                </div>
+            )}
         </div>
-
     );
 };
 

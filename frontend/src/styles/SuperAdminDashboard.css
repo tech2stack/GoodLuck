@@ -105,6 +105,13 @@
     background-color: #0f766e; /* Equivalent to hover:bg-teal-700 */
 }
 
+.report-button {
+    background-color: #5cd0da; /* Equivalent to bg-teal-600 */
+}
+.report-button:hover {
+    background-color: #760f5e; /* Equivalent to hover:bg-teal-700 */
+}
+
 /* Dropdown Styles */
 .relative-dropdown {
     position: relative;

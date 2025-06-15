@@ -3,14 +3,12 @@
 const Branch = require('../models/Branch'); // Assuming you have a Branch model
 const BranchAdmin = require('../models/BranchAdmin'); // Assuming BranchAdmin model
 const Employee = require('../models/Employee'); // Assuming Employee model
-const csv = require('csv-parser'); // If you're generating CSVs dynamically, though json2csv is used here
-const { Parser } = require('json2csv'); // For CSV generation
-const path = require('path'); // For serving static files or handling file paths
-const pdf = require('html-pdf'); // NEW: For PDF generation
+const csv = require('csv-parser');
+const { Parser } = require('json2csv');
+const path = require('path');
+const pdf = require('html-pdf');
 
 // --- Helper function for error handling ---
-// Assuming you have an ErrorResponse class or similar for custom errors
-// const ErrorResponse = require('../utils/errorResponse'); // Example
 const asyncHandler = (fn) => (req, res, next) =>
     Promise.resolve(fn(req, res, next)).catch(next);
 
@@ -18,11 +16,6 @@ const asyncHandler = (fn) => (req, res, next) =>
 // @route   GET /api/v1/reports/overall
 // @access  Private (Super Admin)
 exports.getOverallReport = asyncHandler(async (req, res, next) => {
-    // Implement authorization check here if needed
-    // if (req.user.role !== 'superAdmin') {
-    //     return next(new ErrorResponse('Not authorized to access this report', 403));
-    // }
-
     const totalBranches = await Branch.countDocuments();
     const activeBranches = await Branch.countDocuments({ status: 'active' });
     const inactiveBranches = await Branch.countDocuments({ status: 'inactive' });
@@ -114,7 +107,8 @@ exports.getBranchOverviewReport = asyncHandler(async (req, res, next) => {
     const report = [];
     for (const branch of branches) {
         // For each branch, count its employees
-        const employeeCount = await Employee.countDocuments({ branch: branch._id }); // Assuming 'branch' field in Employee model
+        // --- CORRECTED LINE: Using 'branchId' for Employee model ---
+        const employeeCount = await Employee.countDocuments({ branchId: branch._id }); 
         report.push({
             _id: branch._id,
             name: branch.name,
@@ -141,7 +135,8 @@ exports.downloadBranchOverviewReport = asyncHandler(async (req, res, next) => {
     const data = [];
 
     for (const branch of branches) {
-        const employeeCount = await Employee.countDocuments({ branch: branch._id });
+        // --- CORRECTED LINE: Using 'branchId' for Employee model ---
+        const employeeCount = await Employee.countDocuments({ branchId: branch._id });
         data.push({
             'Branch Name': branch.name,
             'Location': branch.location,
@@ -163,13 +158,12 @@ exports.downloadBranchOverviewReport = asyncHandler(async (req, res, next) => {
         res.status(200).send(csv);
     } catch (err) {
         console.error('Error generating CSV:', err);
-        // Assuming ErrorResponse class exists
-        next(new ErrorResponse('Could not generate CSV report', 500));
+        next(new Error('Could not generate CSV report', 500));
     }
 });
 
 
-// NEW: @desc    Get Details for a Specific Branch
+// @desc    Get Details for a Specific Branch
 // @route   GET /api/v1/reports/branch-details/:id
 // @access  Private (Super Admin or Branch Admin of that branch)
 exports.getBranchDetailsReport = asyncHandler(async (req, res, next) => {
@@ -177,13 +171,16 @@ exports.getBranchDetailsReport = asyncHandler(async (req, res, next) => {
 
     const branch = await Branch.findById(branchId).select('name location status contactEmail');
     if (!branch) {
-        // Assuming ErrorResponse class exists
         return next(new Error('Branch not found with ID ' + branchId, 404));
     }
 
-    const employeeCount = await Employee.countDocuments({ branch: branchId });
-    const employees = await Employee.find({ branch: branchId }).select('name position email');
-    const branchAdmin = await BranchAdmin.findOne({ branch: branchId }).select('name email');
+    // --- CORRECTED LINE: Using 'branchId' for Employee model count ---
+    const employeeCount = await Employee.countDocuments({ branchId: branchId });
+    // --- CORRECTED LINE: Using 'branchId' for Employee model find ---
+    const employees = await Employee.find({ branchId: branchId }).select('name position email');
+    
+    // This line was already corrected in the previous round
+    const branchAdmin = await BranchAdmin.findOne({ branchId: branchId }).select('name email'); 
 
     res.status(200).json({
         success: true,
@@ -202,7 +199,7 @@ exports.getBranchDetailsReport = asyncHandler(async (req, res, next) => {
     });
 });
 
-// NEW: @desc    Download CSV for Specific Branch Details
+// @desc    Download CSV for Specific Branch Details
 // @route   GET /api/v1/reports/branch-details/:id/download
 // @access  Private (Super Admin or Branch Admin of that branch)
 exports.downloadBranchDetailsReport = asyncHandler(async (req, res, next) => {
@@ -213,8 +210,10 @@ exports.downloadBranchDetailsReport = asyncHandler(async (req, res, next) => {
         return res.status(404).json({ success: false, message: 'Branch not found.' });
     }
 
-    const employees = await Employee.find({ branch: branchId }).select('name position email');
-    const branchAdmin = await BranchAdmin.findOne({ branch: branchId }).select('name email');
+    // --- CORRECTED LINE: Using 'branchId' for Employee model find ---
+    const employees = await Employee.find({ branchId: branchId }).select('name position email');
+    // This line was already corrected in the previous round
+    const branchAdmin = await BranchAdmin.findOne({ branchId: branchId }).select('name email');
 
     // Prepare data for CSV
     const data = [
@@ -235,9 +234,8 @@ exports.downloadBranchDetailsReport = asyncHandler(async (req, res, next) => {
         );
     });
 
-
     try {
-        const json2csvParser = new Parser({ fields: ['Metric', 'Value'] }); // Define fields for simple K-V pairs
+        const json2csvParser = new Parser({ fields: ['Metric', 'Value'] });
         const csv = json2csvParser.parse(data);
 
         res.setHeader('Content-Type', 'text/csv');
